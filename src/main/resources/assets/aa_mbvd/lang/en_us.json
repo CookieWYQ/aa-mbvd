@@ -1,0 +1,35 @@
+{
+  "itemGroup.aa_mbvd_tab": "AA-MBVD",
+
+  "item.aa_mbvd.attorneys_badge": "Attorney's Badge",
+  "item.aa_mbvd.prosbadge": "Prosbadge",
+  "item.aa_mbvd.silver_nugget": "Silver Nugget",
+  "item.aa_mbvd.silver_ingot": "Silver Ingot",
+  "item.aa_mbvd.mayas_magatama": "Maya's Magatama",
+  "item.aa_mbvd.metal_detector": "Metal Detector",
+  "item.aa_mbvd.cloth_with_qians_handprint_printed_on_it": "Cloth with Qian's handprint printed on it",
+  "item.aa_mbvd.gant_boom": "Angry Damon Gant",
+  "item.aa_mbvd.photo_annihilator_killer": "Annihilator Killer",
+
+  "block.aa_mbvd.silver_block": "Silver Block",
+  "block.aa_mbvd.silver_ore": "Silver Ore",
+
+  "key.categories.aa_mbvd": "AA-MBVD",
+
+  "key.aa_mbvd.show_badge": "Show Badge",
+  "key.aa_mbvd.objection": "Objection!",
+  "key.aa_mbvd.takethat": "Take that!",
+  "key.aa_mbvd.holdit": "Hold it!",
+  "key.aa_mbvd.show_photo": "Show Photo",
+
+  "target.manfred": "Manfred von Karma",
+
+  "tooltip.metal_detector": "Manfred von Karma likes this very much.",
+  "tooltip.gant_boom": "3000 Booms!!!",
+  "tooltip.need_shift_tip": "You need to use this Item by pressing Shift.",
+
+  "curios.identifier.charm_mayas_magatama": "Charm of Maya's Magatama",
+  "curios.identifier.charm_badge": "Charm of badge",
+
+  "screen.court_records": "Court Records"
+}

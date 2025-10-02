@@ -1,0 +1,167 @@
+package com.cookiewyq.aa_mbvd;
+
+import com.cookiewyq.aa_mbvd.blocks.ModBlocks;
+import com.cookiewyq.aa_mbvd.capability.IGetPlayerCourtRecordsTileEntityData;
+import com.cookiewyq.aa_mbvd.capability.IShowingEvidenceData;
+import com.cookiewyq.aa_mbvd.capability.ShowingEvidenceData;
+import com.cookiewyq.aa_mbvd.capability.getPlayerCourtRecordsTileEntityData;
+import com.cookiewyq.aa_mbvd.configs.ModConfigs;
+import com.cookiewyq.aa_mbvd.container.ModContainer;
+import com.cookiewyq.aa_mbvd.entities.ModEntityTypes;
+import com.cookiewyq.aa_mbvd.events.ModForgeEvents;
+import com.cookiewyq.aa_mbvd.items.MinecraftEvidences;
+import com.cookiewyq.aa_mbvd.items.ModItems;
+import com.cookiewyq.aa_mbvd.keyBinding.ModKeyBindings;
+import com.cookiewyq.aa_mbvd.network.Networking;
+import com.cookiewyq.aa_mbvd.renderers.PhoenixWrightRenderer;
+import com.cookiewyq.aa_mbvd.screen.CourtRecordsGUI;
+import com.cookiewyq.aa_mbvd.sound.ModSounds;
+import com.cookiewyq.aa_mbvd.tileentity.ModTileEntities;
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.SpriteRenderer;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import software.bernie.geckolib3.GeckoLib;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.SlotTypeMessage;
+
+@Mod(AA_MbvdMod.MOD_ID)
+public class AA_MbvdMod {
+    public static final String MOD_ID = "aa_mbvd";
+    public static final Logger PLOGGER = LogManager.getLogger();
+
+    public AA_MbvdMod() {
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        ModSounds.registerLittleMatterSounds();
+        ModSounds.register(eventBus);
+        ModItems.register(eventBus);
+        ModEntityTypes.register(eventBus);
+        ModBlocks.register(eventBus);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ModConfigs.COMMON_CONFIG);
+        Networking.registerMessage();
+        ModContainer.register(eventBus);
+        ModTileEntities.register(eventBus);
+
+        // Register the setup method for modloading
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        // Register the enqueueIMC method for modloading
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
+        // Register the processIMC method for modloading
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
+        // Register the doClientStuff method for modloading
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+
+        // Register ourselves for server and other game events we are interested in
+        MinecraftForge.EVENT_BUS.register(this);
+
+        // 注册Forge事件总线上的事件监听器
+        MinecraftForge.EVENT_BUS.register(new Object() {
+            @SubscribeEvent
+            public void onLivingDeath(LivingDeathEvent event) {
+                ModForgeEvents.onLivingDeath(event);
+            }
+
+            @SubscribeEvent
+            public void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+                if (event.getObject() instanceof PlayerEntity) {
+                    PLOGGER.debug("Fuck onAttachCapabilities");
+                    // 为玩家实体附加能力
+                    event.addCapability(new ResourceLocation(AA_MbvdMod.MOD_ID, "showing_evidence_data"),
+                            new IShowingEvidenceData.Provider());
+
+                    event.addCapability(new ResourceLocation(AA_MbvdMod.MOD_ID, "court_records_data"),
+                            new IGetPlayerCourtRecordsTileEntityData.Provider());
+
+                }
+            }
+        });
+    }
+
+    private void setup(final FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            // 注册能力
+            CapabilityManager.INSTANCE.register(
+                    IShowingEvidenceData.class,
+                    new ShowingEvidenceData.Storage(),
+                    ShowingEvidenceData::new
+            );
+
+            CapabilityManager.INSTANCE.register(
+                    IGetPlayerCourtRecordsTileEntityData.class,
+                    new getPlayerCourtRecordsTileEntityData.Storage(),
+                    getPlayerCourtRecordsTileEntityData::new
+            );
+
+            MinecraftEvidences.register();
+            GeckoLib.initialize();
+        });
+    }
+
+    private void doClientStuff(final FMLClientSetupEvent event) {
+        ModKeyBindings.register(event);
+
+        // 添加这一行来注册容器屏幕
+        event.enqueueWork(() -> {
+            net.minecraft.client.gui.ScreenManager.registerFactory(
+                    ModContainer.COURTRECORDS_CONTAINER.get(),
+                    CourtRecordsGUI::new
+            );
+        });
+
+        RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.BADGE.get(),
+                manager -> new SpriteRenderer<>(manager, Minecraft.getInstance().getItemRenderer()));
+
+        RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.PhoenixWright.get(),
+                PhoenixWrightRenderer::new);
+    }
+
+
+    private void enqueueIMC(final InterModEnqueueEvent event) {
+        // 注册第一个 CHARM 槽位
+        InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE,
+                () -> new SlotTypeMessage.Builder("charm_mayas_magatama").build());
+
+        // 注册第二个 CHARM 槽位
+        InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE,
+                () -> new SlotTypeMessage.Builder("charm_badge").build());
+    }
+
+
+    private void processIMC(final InterModProcessEvent event) {
+    }
+
+    @SubscribeEvent
+    public void onServerStarting(FMLServerStartingEvent event) {
+    }
+
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class RegistryEvents {
+        @SubscribeEvent
+        public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
+            PLOGGER.info("HELLO from Register Block");
+        }
+    }
+}

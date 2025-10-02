@@ -1,0 +1,42 @@
+{
+  "display": {
+    "icon": {
+      "item": "cookiemod:rick_chestplate"
+    },
+    "title": {
+      "translate": "advancement.cookiemod.get_all_rick_armors.title",
+      "color": "#56dcc6",
+      "font": "minecraft:default",
+      "bold": true
+    },
+    "description": {
+      "translate": "advancement.cookiemod.get_all_rick_armors.description",
+      "font": "minecraft:default"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "cookiemod:first_time_rick",
+  "criteria": {
+    "requirements": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "cookiemod:rick_helmet"
+          },
+          {
+            "item": "cookiemod:rick_chestplate"
+          },
+          {
+            "item": "cookiemod:rick_leggings"
+          },
+          {
+            "item": "cookiemod:rick_boots"
+          }
+        ]
+      }
+    }
+  }
+}

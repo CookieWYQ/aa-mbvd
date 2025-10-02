@@ -1,0 +1,33 @@
+{
+  "itemGroup.aa_mbvd_tab": "泥砖菜盘",
+
+  "item.aa_mbvd.attorneys_badge": "律师徽章",
+  "item.aa_mbvd.prosbadge": "检察官徽章",
+  "item.aa_mbvd.silver_nugget": "银粒",
+  "item.aa_mbvd.silver_ingot": "银锭",
+  "item.aa_mbvd.mayas_magatama": "勾玉",
+  "item.aa_mbvd.metal_detector": "金属探测仪",
+  "item.aa_mbvd.cloth_with_qians_handprint_printed_on_it": "印有茜手印的布",
+  "item.aa_mbvd.gant_boom": "豹变的严徒海慈",
+  "item.aa_mbvd.photo_annihilator_killer": "传奇灭火器杀手",
+
+  "block.aa_mbvd.silver_block": "银块",
+  "block.aa_mbvd.silver_ore": "银矿",
+
+  "key.categories.aa_mbvd": "泥砖菜盘",
+
+  "key.aa_mbvd.show_badge": "出示证物",
+  "key.aa_mbvd.objection": "异议！",
+  "key.aa_mbvd.takethat": "看招！",
+  "key.aa_mbvd.holdit": "等等！",
+  "key.aa_mbvd.show_photo": "照片详情",
+
+  "target.manfred": "狩魔豪",
+
+  "tooltip.metal_detector": "狩魔豪狂喜",
+  "tooltip.gant_boom": "春节三千响",
+  "tooltip.need_shift_tip": "按住Shift以使用该物品。",
+
+  "curios.identifier.charm_mayas_magatama": "勾玉",
+  "curios.identifier.charm_badge": "徽章"
+}

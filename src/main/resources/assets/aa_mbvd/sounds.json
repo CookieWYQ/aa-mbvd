@@ -1,0 +1,186 @@
+{
+  "show_badge": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:show_badge",
+        "stream": true
+      }
+    ]
+  },
+  "gant_boom_3000": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:gant_boom_3000",
+        "stream": true
+      }
+    ]
+  },
+  "manfred_hitting_wall": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:manfred_hitting_wall",
+        "stream": true
+      }
+    ]
+  },
+  "open_details": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:open_details",
+        "stream": true
+      }
+    ]
+  },
+  "close_details": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:close_details",
+        "stream": true
+      }
+    ]
+  },
+  "miles_edgeworth_holdit_en": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:miles_edgeworth_holdit_en",
+        "stream": true
+      }
+    ]
+  },
+  "miles_edgeworth_holdit_jp": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:miles_edgeworth_holdit_jp",
+        "stream": true
+      }
+    ]
+  },
+  "miles_edgeworth_holdit_zh": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:miles_edgeworth_holdit_zh",
+        "stream": true
+      }
+    ]
+  },
+  "miles_edgeworth_objection_en": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:miles_edgeworth_objection_en",
+        "stream": true
+      }
+    ]
+  },
+  "miles_edgeworth_objection_jp": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:miles_edgeworth_objection_jp",
+        "stream": true
+      }
+    ]
+  },
+  "miles_edgeworth_objection_zh": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:miles_edgeworth_objection_zh",
+        "stream": true
+      }
+    ]
+  },
+  "miles_edgeworth_takethat_en": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:miles_edgeworth_takethat_en",
+        "stream": true
+      }
+    ]
+  },
+  "miles_edgeworth_takethat_jp": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:miles_edgeworth_takethat_jp",
+        "stream": true
+      }
+    ]
+  },
+  "miles_edgeworth_takethat_zh": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:miles_edgeworth_takethat_zh",
+        "stream": true
+      }
+    ]
+  },
+  "phoenix_wright_holdit_en": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:phoenix_wright_holdit_en",
+        "stream": true
+      }
+    ]
+  },
+  "phoenix_wright_holdit_jp": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:phoenix_wright_holdit_jp",
+        "stream": true
+      }
+    ]
+  },
+  "phoenix_wright_holdit_zh": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:phoenix_wright_holdit_zh",
+        "stream": true
+      }
+    ]
+  },
+  "phoenix_wright_objection_en": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:phoenix_wright_objection_en",
+        "stream": true
+      }
+    ]
+  },
+  "phoenix_wright_objection_jp": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:phoenix_wright_objection_jp",
+        "stream": true
+      }
+    ]
+  },
+  "phoenix_wright_objection_zh": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:phoenix_wright_objection_zh",
+        "stream": true
+      }
+    ]
+  },
+  "phoenix_wright_takethat_en": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:phoenix_wright_takethat_en",
+        "stream": true
+      }
+    ]
+  },
+  "phoenix_wright_takethat_jp": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:phoenix_wright_takethat_jp",
+        "stream": true
+      }
+    ]
+  },
+  "phoenix_wright_takethat_zh": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:phoenix_wright_takethat_zh",
+        "stream": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "aa_mbvd:block/silver_block"
+  }
+}

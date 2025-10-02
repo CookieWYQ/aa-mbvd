@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AAA",
+    "ABA",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:gold_nugget"
+    },
+    "B": {
+      "item": "aa_mbvd:silver_ingot"
+    }
+  },
+  "result": {
+    "item": "aa_mbvd:attorneys_badge",
+    "count": 1
+  }
+}

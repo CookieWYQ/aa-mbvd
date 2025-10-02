@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.cookiewyq.aa_mbvd.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "refmap": "modid.mixin-refmap.json"
+}

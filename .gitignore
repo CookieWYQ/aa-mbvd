@@ -1,0 +1,29 @@
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
+
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
+
+# gradle
+build
+.gradle
+
+# other
+eclipse
+run
+1_16_5/java8/
+ 1_16_5/java8/jdk-8u431-windows-x64.exe
+  1_16_5/java8/java/jre/bin/jfxwebkit.dll
+  1_16_5/java8/java/jre/lib/rt.jar
+
+# Files from Forge MDK
+forge*changelog.txt

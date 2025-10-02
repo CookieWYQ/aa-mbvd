@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AAA",
+    "AAA",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "aa_mbvd:silver_nugget"
+    }
+  },
+  "result": {
+    "item": "aa_mbvd:silver_ingot",
+    "count": 1
+  }
+}

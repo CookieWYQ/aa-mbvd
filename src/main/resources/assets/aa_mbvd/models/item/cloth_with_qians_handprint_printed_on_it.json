@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "aa_mbvd:item/cloth_with_qians_handprint_printed_on_it"
+  }
+}

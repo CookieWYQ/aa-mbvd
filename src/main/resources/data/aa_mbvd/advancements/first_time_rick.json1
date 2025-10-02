@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "item": "cookiemod:rmkill"
+    },
+    "title": {
+      "translate": "advancement.cookiemod.first_time_rick.title",
+      "color": "#68a4f3",
+      "font": "minecraft:default",
+      "bold": true
+    },
+    "description": {
+      "translate": "advancement.cookiemod.first_time_rick.description",
+      "color": "#68a4f3",
+      "font": "minecraft:default",
+      "bold": true
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "background": "cookiemod:textures/block/portal_fluid_coagulator_block.png"
+  },
+  "criteria": {
+    "requirements": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "cookiemod:rick_ingot"
+          }
+        ]
+      }
+    }
+  }
+}

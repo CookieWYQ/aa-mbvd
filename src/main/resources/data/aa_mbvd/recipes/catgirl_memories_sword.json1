@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " A ",
+    " D ",
+    " B "
+  ],
+  "key": {
+    "A": {
+      "item": "cookiemod:rick_ingot"
+    },
+    "B": {
+      "item": "minecraft:diamond"
+    },
+    "D": {
+      "tag": "fishes"
+    }
+  },
+  "result": {
+    "item": "cookiemod:catgirl_memories_sword",
+    "count": 1
+  }
+}
