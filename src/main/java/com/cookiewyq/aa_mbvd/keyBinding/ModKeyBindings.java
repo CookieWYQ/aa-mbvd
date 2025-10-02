@@ -33,11 +33,17 @@ public class ModKeyBindings {
             GLFW.GLFW_KEY_N,           // 默认按 N
             "key.categories.aa_mbvd");
 
+    public static final KeyBinding Open_Court_Records__Key = new KeyBinding(
+            "key.aa_mbvd.open_court_records",   // 语言文件里的键名
+            GLFW.GLFW_KEY_R,           // 默认按 R
+            "key.categories.aa_mbvd");
+
     public static void register(FMLClientSetupEvent event) {
         event.enqueueWork(() -> ClientRegistry.registerKeyBinding(Show_Badge__Key));
         event.enqueueWork(() -> ClientRegistry.registerKeyBinding(Objection__Key));
         event.enqueueWork(() -> ClientRegistry.registerKeyBinding(Holdit__Key));
         event.enqueueWork(() -> ClientRegistry.registerKeyBinding(Takethat__Key));
         event.enqueueWork(() -> ClientRegistry.registerKeyBinding(Show_Photo__Key));
+        event.enqueueWork(() -> ClientRegistry.registerKeyBinding(Open_Court_Records__Key));
     }
 }

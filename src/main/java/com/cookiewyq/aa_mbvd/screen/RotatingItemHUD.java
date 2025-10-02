@@ -37,7 +37,6 @@ public class RotatingItemHUD extends AbstractGui {
             return;
         }
 
-
         // 获取屏幕中心位置
         int screenWidth = mc.getMainWindow().getScaledWidth();
         int screenHeight = mc.getMainWindow().getScaledHeight();
@@ -45,26 +44,24 @@ public class RotatingItemHUD extends AbstractGui {
         int centerY = screenHeight / 2;
 
         // 计算动画参数
+        this.spendTime = 1200f; // 1.2秒
 
-        this.spendTime = 1200f;
-        float new_rotation = rotation, new_scale = scale, new_alpha = alpha;
+        // 修复时间计算逻辑
+        long currentTime = System.currentTimeMillis();
         if (!Minecraft.getInstance().isGamePaused()) {
-            elapsed = HudClientEvent.getEffectiveTime() - startTime;
-            progress = Math.min(1.0f, elapsed / spendTime); // 0到1之间的进度值，1.2秒完成
-
-            // 旋转角度（从0度到360度）
-            new_rotation = progress * 360.0f * 2f;
-
-            // 缩放因子（从2.0倍大小逐渐缩小到0倍）
-            new_scale = 7.2f - progress * 6f;
-
-            // 透明度（保持不变或轻微变化）
-            new_alpha = 1.0f;
+            elapsed = Math.max(0, currentTime - startTime); // 确保不为负值
         }
 
-        rotation = new_rotation;
-        scale = new_scale;
-        alpha = new_alpha;
+        progress = Math.min(1.0f, elapsed / spendTime); // 0到1之间的进度值
+
+        // 旋转角度（从0度到720度，即两圈）
+        rotation = progress * 360.0f * 2f;
+
+        // 缩放因子（从7.2倍大小逐渐缩小到1.2倍）
+        scale = 7.2f - progress * 6f;
+
+        // 透明度（保持不变）
+        alpha = 1.0f;
 
         // 启用渲染状态
         RenderSystem.enableBlend();
@@ -88,15 +85,15 @@ public class RotatingItemHUD extends AbstractGui {
         }
     }
 
-
     /**
      * 检查动画是否已完成
      *
      * @return 如果动画已完成返回true，否则返回false
      */
     public boolean isFinished() {
+        long currentTime = System.currentTimeMillis();
         if (!Minecraft.getInstance().isGamePaused()) {
-            elapsed = HudClientEvent.getEffectiveTime() - startTime;
+            elapsed = Math.max(0, currentTime - startTime);
         }
         boolean finished = elapsed > spendTime; // 1.2秒后动画结束
         if (finished && elapsed < spendTime + 100) { // 只在刚完成时打印一次
@@ -104,4 +101,5 @@ public class RotatingItemHUD extends AbstractGui {
         }
         return finished;
     }
+
 }

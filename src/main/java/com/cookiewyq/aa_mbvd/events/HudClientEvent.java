@@ -261,11 +261,18 @@ public class HudClientEvent {
 
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
-        if (event.getKey() == GLFW.GLFW_KEY_R) {
-            INamedContainerProvider containerProvider = createContainerProvider(player.world, player.getPosition());
-            NetworkHooks.openGui(((ServerPlayerEntity) tools.getPlayerEntityFromUUIDByTickEvent(player.getUniqueID())), containerProvider, player.getPosition());
+        if (player != null &&
+                event.getKey() == ModKeyBindings.Open_Court_Records__Key.getKey().getKeyCode() &&
+                player.world != null) {
+            player.getPosition();
+            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) tools.getPlayerEntityFromUUIDByTickEvent(player.getUniqueID());
+            if (serverPlayer != null) {
+                INamedContainerProvider containerProvider = createContainerProvider(player.world, player.getPosition());
+                NetworkHooks.openGui(serverPlayer, containerProvider, player.getPosition());
+            }
         }
     }
+
 
     // 在 HudClientEvent.java 中修改相关代码
     @SubscribeEvent
@@ -333,7 +340,7 @@ public class HudClientEvent {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
 
-        if (!ModConfigs.isEnableOldSchoolShowingEvidenceHUD.get()) {
+        if (ModConfigs.isEnableOldSchoolShowingEvidenceHUD.get()) {
             // 处理出示证物按键按下事件
             isShowItemKeyPressed = Show_Badge__Key.isKeyDown() && hasBadge(player);
 
@@ -593,6 +600,27 @@ public class HudClientEvent {
             }
         }
         wasLittleMatterKeyPressed = isAnyLittleMatterKeyPressed;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////
+
+        // 添加清理过期的 Little Matter 状态
+        if (displayedWord != null && getDisplayingLittleMatterTime() >= 1500) {
+            displayedWord = null;
+            displayedRole = null;
+            displayedLang = null;
+        }
+
+        if (displayedWordThirdPerson != null && (getEffectiveTime() - displayLittleMatterStartTimeThirdPerson) >= 1500) {
+            displayedWordThirdPerson = null;
+            displayedRoleThirdPerson = null;
+            displayedLangThirdPerson = null;
+            displayedPlayerThirdPerson = null;
+        }
+
     }
 
     private static void handleThirdPersonLittleMatter(boolean isAnyLittleMatterKeyPressed,

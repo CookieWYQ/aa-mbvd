@@ -12,7 +12,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
@@ -25,8 +24,6 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
-
-import static com.cookiewyq.aa_mbvd.AA_MbvdMod.PLOGGER;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault

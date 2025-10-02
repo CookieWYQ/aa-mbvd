@@ -21,12 +21,18 @@
   "key.aa_mbvd.takethat": "Take that!",
   "key.aa_mbvd.holdit": "Hold it!",
   "key.aa_mbvd.show_photo": "Show Photo",
+  "key.aa_mbvd.open_court_records": "Open Court Records",
+
+  "enchantment.aa_mbvd.boom_enchant": "Boom--Gant",
 
   "target.manfred": "Manfred von Karma",
 
   "tooltip.metal_detector": "Manfred von Karma likes this very much.",
   "tooltip.gant_boom": "3000 Booms!!!",
   "tooltip.need_shift_tip": "You need to use this Item by pressing Shift.",
+  "tooltip.enchanted_book.boom_enchant_1": "There is a 30% chance of triggering an explosion when attacking a creature, and the explosion level is determined by the enchantment level",
+  "tooltip.enchanted_book.boom_enchant_2": "When attacked by a creature and the deputy holds the \"Gant Boom\", there is a 10% chance that the attacking creature will explode by consuming the \"Gant Boom\". The explosion level is determined by the enchantment level and the number of \"Gant Boom\" held by the deputy",
+  "tooltip.enchanted_book.boom_enchant_3": "When the object held by the main hand is a metal detector, the explosion damage value will be set to 1 by consuming durability",
 
   "curios.identifier.charm_mayas_magatama": "Charm of Maya's Magatama",
   "curios.identifier.charm_badge": "Charm of badge",

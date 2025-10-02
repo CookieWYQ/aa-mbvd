@@ -7,6 +7,7 @@ import com.cookiewyq.aa_mbvd.capability.ShowingEvidenceData;
 import com.cookiewyq.aa_mbvd.capability.getPlayerCourtRecordsTileEntityData;
 import com.cookiewyq.aa_mbvd.configs.ModConfigs;
 import com.cookiewyq.aa_mbvd.container.ModContainer;
+import com.cookiewyq.aa_mbvd.enchantments.ModEnchantments;
 import com.cookiewyq.aa_mbvd.entities.ModEntityTypes;
 import com.cookiewyq.aa_mbvd.events.ModForgeEvents;
 import com.cookiewyq.aa_mbvd.items.MinecraftEvidences;
@@ -28,6 +29,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -64,6 +66,7 @@ public class AA_MbvdMod {
         Networking.registerMessage();
         ModContainer.register(eventBus);
         ModTileEntities.register(eventBus);
+        ModEnchantments.register(eventBus);
 
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
@@ -82,6 +85,11 @@ public class AA_MbvdMod {
             @SubscribeEvent
             public void onLivingDeath(LivingDeathEvent event) {
                 ModForgeEvents.onLivingDeath(event);
+            }
+
+            @SubscribeEvent
+            public void onLivingHurt(LivingHurtEvent event) {
+                ModForgeEvents.onLivingHurt(event);
             }
 
             @SubscribeEvent
