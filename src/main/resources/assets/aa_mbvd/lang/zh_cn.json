@@ -34,6 +34,8 @@
   "tooltip.enchanted_book.boom_enchant_2": "被生物攻击且副手持有“豹变的严徒海慈”时，有10%的概率通过消耗“豹变的严徒海慈”使攻击你的生物爆炸，爆炸等级根据附魔等级和副手持有的“豹变的严徒海慈”的个数决定",
   "tooltip.enchanted_book.boom_enchant_3": "当主手手持的物品是金属探测仪上时，会通过消耗耐久来将爆炸伤害的值设定为1",
 
+  "entity.minecraft.villager.aa_mbvd.cbt": "AAA成步堂开锁师傅",
+
   "curios.identifier.charm_mayas_magatama": "勾玉",
   "curios.identifier.charm_badge": "徽章",
   "screen.court_records": "Court Records"

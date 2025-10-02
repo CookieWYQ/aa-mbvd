@@ -18,6 +18,8 @@ import com.cookiewyq.aa_mbvd.renderers.PhoenixWrightRenderer;
 import com.cookiewyq.aa_mbvd.screen.CourtRecordsGUI;
 import com.cookiewyq.aa_mbvd.sound.ModSounds;
 import com.cookiewyq.aa_mbvd.tileentity.ModTileEntities;
+import com.cookiewyq.aa_mbvd.villagers.ModPOIs;
+import com.cookiewyq.aa_mbvd.villagers.ModVillagerProfessions;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.SpriteRenderer;
@@ -67,6 +69,8 @@ public class AA_MbvdMod {
         ModContainer.register(eventBus);
         ModTileEntities.register(eventBus);
         ModEnchantments.register(eventBus);
+        ModPOIs.register(eventBus);
+        ModVillagerProfessions.register(eventBus);
 
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
