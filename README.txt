@@ -1,46 +1,100 @@
+# AA_Mbvd - Ace Attorney Mod for Minecraft 1.16.5
 
-Source installation information for modders
--------------------------------------------
-This code follows the Minecraft Forge installation methodology. It will apply
-some small patches to the vanilla MCP source code, giving you and it access 
-to some of the data and functions you need to build a successful mod.
+A Minecraft mod that brings elements from the Ace Attorney series into Minecraft, featuring badges, evidence system, courtroom mechanics, and iconic characters.
 
-Note also that the patches are built against "un-renamed" MCP source code (aka
-SRG Names) - this means that you will not be able to read them directly against
-normal code.
+## Features
 
-Setup Process:
-==============================
+### Core Gameplay Elements
+- **Court Records System**: A 54-slot container for storing and managing evidence
+- **Evidence System**: Collect and present evidence during gameplay
+- **Badge Mechanics**: Attorney badges and other iconic items from the series
+- **Sound Effects**: Authentic audio clips from Ace Attorney games
 
-Step 1: Open your command-line and browse to the folder where you extracted the zip file.
+### Items & Equipment
+- Attorney's Badge
+- Prosecutor's Badge
+- Metal Detector
+- Various evidence items
+- Curios integration with charm slots for badges and magatamas
 
-Step 2: You're left with a choice.
-If you prefer to use Eclipse:
-1. Run the following command: `gradlew genEclipseRuns` (`./gradlew genEclipseRuns` if you are on Mac/Linux)
-2. Open Eclipse, Import > Existing Gradle Project > Select Folder 
-   or run `gradlew eclipse` to generate the project.
+### Entities & Rendering
+- Phoenix Wright character model with animations
+- Badge entity rendering
+- Custom block rendering for silver ore and blocks
 
-If you prefer to use IntelliJ:
-1. Open IDEA, and import project.
-2. Select your build.gradle file and have it import.
-3. Run the following command: `gradlew genIntellijRuns` (`./gradlew genIntellijRuns` if you are on Mac/Linux)
-4. Refresh the Gradle Project in IDEA if required.
+### Capabilities & Data Management
+- Player capability system for evidence data
+- Court records tile entity management
+- Custom data holders for gameplay state
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can 
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+## Installation
 
-Mapping Names:
-=============================
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license, if you do not agree with it you can change your mapping names to other crowdsourced names in your 
-build.gradle. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/MinecraftForge/MCPConfig/blob/master/Mojang.md
+1. Download and install Minecraft 1.16.5
+2. Install Forge 1.16.5
+3. Download the latest release of this mod
+4. Place the mod file in your [mods](file://net\minecraftforge\client\event\InputEvent.java#L64-L64) folder
+5. Launch Minecraft with the Forge profile
 
-Additional Resources: 
-=========================
-Community Documentation: http://mcforge.readthedocs.io/en/latest/gettingstarted/  
-LexManos' Install Video: https://www.youtube.com/watch?v=8VEdtQLuLO0  
-Forge Forum: https://forums.minecraftforge.net/  
-Forge Discord: https://discord.gg/UvedJ9m  
+## Dependencies
+
+- Minecraft 1.16.5
+- Forge 1.16.5
+- Curios API
+- GeckoLib
+
+## Building from Source
+
+This mod uses Gradle for building:
+
+##Clone the repository
+git clone https://github.com/your-username/aa-mbvd.git
+
+##Navigate to the project directory
+cd aa-mbvd
+
+##Build the mod
+./gradlew build
+
+The built mod file will be located in `build/libs/`.
+
+## Key Classes and Systems
+
+### Main Mod Class
+- [AA_MbvdMod](file://D:\MODS\1_16_5\aa-mbvd\src\main\java\com\cookiewyq\aa_mbvd\AA_MbvdMod.java#L49-L166): Main mod class handling initialization and event registration
+
+### Core Systems
+- [CourtRecordsContainer](file://D:\MODS\1_16_5\aa-mbvd\src\main\java\com\cookiewyq\aa_mbvd\container\CourtRecordsContainer.java#L19-L171): 54-slot evidence container system
+- [CourtRecordsGUI](file://D:\MODS\1_16_5\aa-mbvd\src\main\java\com\cookiewyq\aa_mbvd\screen\CourtRecordsGUI.java#L21-L70): GUI interface for the court records
+- [IShowingEvidenceData](file://D:\MODS\1_16_5\aa-mbvd\src\main\java\com\cookiewyq\aa_mbvd\capability\IShowingEvidenceData.java#L15-L71): Player capability for evidence management
+- [MinecraftEvidences](file://D:\MODS\1_16_5\aa-mbvd\src\main\java\com\cookiewyq\aa_mbvd\items\MinecraftEvidences.java#L5-L9): Evidence registration and management
+
+### Rendering & Animation
+- [PhoenixWrightRenderer](file://D:\MODS\1_16_5\aa-mbvd\src\main\java\com\cookiewyq\aa_mbvd\renderers\PhoenixWrightRenderer.java#L15-L30): Character model renderer
+- Animation files in `assets/aa_mbvd/animations/`
+
+## Configuration
+
+The mod includes configurable settings in [ModConfigs.java](file://D:\MODS\1_16_5\aa-mbvd\src\main\java\com\cookiewyq\aa_mbvd\configs\ModConfigs.java) for adjusting gameplay parameters.
+
+## Known Issues
+
+- Large file warnings may appear during Git operations (historical large files have been removed)
+- Some animations may require optimization
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+This mod is provided as-is for educational and entertainment purposes. All rights to Ace Attorney belong to Capcom.
+
+## Credits
+
+- Inspired by the Ace Attorney series by Capcom
+- Uses GeckoLib for animations
+- Integrates with Curios API for equipment slots
