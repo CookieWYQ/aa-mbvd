@@ -2,9 +2,7 @@ package com.cookiewyq.aa_mbvd;
 
 import com.cookiewyq.aa_mbvd.blocks.ModBlocks;
 import com.cookiewyq.aa_mbvd.capability.Capabilities;
-import com.cookiewyq.aa_mbvd.capability.CourtRecordInventory;
 import com.cookiewyq.aa_mbvd.capability.IShowingEvidenceData;
-import com.cookiewyq.aa_mbvd.capability.ShowingEvidenceData;
 import com.cookiewyq.aa_mbvd.configs.ModConfigs;
 import com.cookiewyq.aa_mbvd.container.ModContainerTypes;
 import com.cookiewyq.aa_mbvd.enchantments.ModEnchantments;
@@ -27,7 +25,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;

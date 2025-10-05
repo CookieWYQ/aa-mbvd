@@ -11,6 +11,8 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.Objects;
+
 @Mod.EventBusSubscriber(modid = AA_MbvdMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PlayerDataEvents {
 
@@ -37,7 +39,7 @@ public class PlayerDataEvents {
             event.getOriginal().getCapability(Capabilities.COURT_RECORD_INVENTORY_CAPABILITY).ifPresent(oldStore -> {
                 event.getPlayer().getCapability(Capabilities.COURT_RECORD_INVENTORY_CAPABILITY).ifPresent(newStore -> {
                     newStore.readNBT(Capabilities.COURT_RECORD_INVENTORY_CAPABILITY, oldStore,
-                            null, oldStore.writeNBT(Capabilities.COURT_RECORD_INVENTORY_CAPABILITY, oldStore, null));
+                            null, Objects.requireNonNull(oldStore.writeNBT(Capabilities.COURT_RECORD_INVENTORY_CAPABILITY, oldStore, null)));
                 });
             });
         }

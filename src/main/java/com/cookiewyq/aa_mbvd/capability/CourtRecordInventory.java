@@ -169,19 +169,15 @@ public class CourtRecordInventory implements IItemHandlerModifiable, Capability.
     public void readNBT(Capability<CourtRecordInventory> capability, CourtRecordInventory instance, Direction side, INBT nbt) {
         CompoundNBT compound = (CompoundNBT) nbt;
 
-        // 检查是否需要调整槽位数量
         int savedRows = compound.contains("rows") ? compound.getInt("rows") : 3;
         int currentRows = ModConfigs.COURT_RECORD_ROWS.get();
 
-        // 如果配置更改了行数，需要重新初始化物品列表
         if (savedRows != currentRows || instance.items.size() != currentRows * 9) {
             instance.items = NonNullList.withSize(currentRows * 9, ItemStack.EMPTY);
         } else {
-            // 否则先清空现有物品
             Collections.fill(instance.items, ItemStack.EMPTY);
         }
 
-        // 读取保存的物品
         for (int i = 0; i < instance.items.size(); i++) {
             if (compound.contains("slot_" + i)) {
                 instance.items.set(i, ItemStack.read(compound.getCompound("slot_" + i)));
