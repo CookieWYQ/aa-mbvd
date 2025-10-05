@@ -38,6 +38,7 @@ public class ModTickEvents {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player != null) {
                 // 执行相关操作
+
             }
         }
     }

@@ -43,6 +43,9 @@ public class ModSounds {
         for (LittleMatter_Roles role : LittleMatter_Roles.values()) {
             for (LittleMatter_Words word : LittleMatter_Words.values()) {
                 for (LittleMatter_Langs lang : LittleMatter_Langs.values()) {
+                    if (role == LittleMatter_Roles.None || word == LittleMatter_Words.None || lang == LittleMatter_Langs.None) {
+                        continue;
+                    }
                     String soundKey = LittleMatter_Tools.getSoundString(word, role, lang);
                     LITTLE_MATTER_SOUNDS.put(soundKey, register(soundKey));
                 }

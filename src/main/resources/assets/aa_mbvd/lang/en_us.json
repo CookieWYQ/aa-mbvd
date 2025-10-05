@@ -39,5 +39,7 @@
 
   "entity.minecraft.villager.aa_mbvd.cbt": "AAA Cbt Open Lock Worker",
 
-  "screen.court_records": "Court Records"
+  "screen.court_records": "Court Records",
+
+  "container.court_record": "Court Record"
 }

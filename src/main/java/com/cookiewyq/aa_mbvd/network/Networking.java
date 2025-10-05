@@ -4,6 +4,7 @@ package com.cookiewyq.aa_mbvd.network;
 import com.cookiewyq.aa_mbvd.AA_MbvdMod;
 import com.cookiewyq.aa_mbvd.network.sendPacks.LittleMatterHeadDisplayPacket;
 import com.cookiewyq.aa_mbvd.network.sendPacks.LittleMatterSendPacket;
+import com.cookiewyq.aa_mbvd.network.sendPacks.OpenCourtRecordScreenPacket;
 import com.cookiewyq.aa_mbvd.network.sendPacks.ShowingEvidenceSendPacket;
 import com.cookiewyq.aa_mbvd.network.sendPacks.showingEvidenceEvents.GivingEffectEventSendPack;
 import net.minecraft.util.ResourceLocation;
@@ -50,5 +51,13 @@ public class Networking {
                 .decoder(GivingEffectEventSendPack::new)
                 .consumer(GivingEffectEventSendPack::handle)
                 .add();
+
+        INSTANCE.messageBuilder(OpenCourtRecordScreenPacket.class, nextID())
+                .encoder(OpenCourtRecordScreenPacket::encode)
+                .decoder(OpenCourtRecordScreenPacket::new)
+                .consumer(OpenCourtRecordScreenPacket::handle)
+                .add();
+
+
     }
 }

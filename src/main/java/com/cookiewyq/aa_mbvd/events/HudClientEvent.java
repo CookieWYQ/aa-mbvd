@@ -3,7 +3,6 @@ package com.cookiewyq.aa_mbvd.events;
 import com.cookiewyq.aa_mbvd.capability.Capabilities;
 import com.cookiewyq.aa_mbvd.common.BooleanHolder;
 import com.cookiewyq.aa_mbvd.configs.ModConfigs;
-import com.cookiewyq.aa_mbvd.container.CourtRecordsContainer;
 import com.cookiewyq.aa_mbvd.items.ModItems;
 import com.cookiewyq.aa_mbvd.items.custom.badges.IBadge;
 import com.cookiewyq.aa_mbvd.items.custom.badges.ModThrowableItem;
@@ -22,28 +21,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.NetworkHooks;
-import org.lwjgl.glfw.GLFW;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.UUID;
@@ -240,39 +226,10 @@ public class HudClientEvent {
         }
     }
 
-    private static INamedContainerProvider createContainerProvider(World worldIn, BlockPos pos) {
-        return new INamedContainerProvider() {
-            @Override
-            public ITextComponent getDisplayName() {
-                return new TranslationTextComponent("screen.court_records").mergeStyle(TextFormatting.BOLD).mergeStyle(TextFormatting.WHITE);
-            }
-
-            @Nonnull
-            @Override
-            public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                return new CourtRecordsContainer(i, worldIn, pos, playerInventory, playerEntity);
-            }
-        };
-    }
 
     public static boolean hasBadge(PlayerEntity player) {
         return tools.getCurioItemFromSlot(player, "charm_badge", 0).getItem() instanceof IBadge;
     }
-
-    @SubscribeEvent
-    public static void onKeyInput(InputEvent.KeyInputEvent event) {
-        if (player != null &&
-                event.getKey() == ModKeyBindings.Open_Court_Records__Key.getKey().getKeyCode() &&
-                player.world != null) {
-            player.getPosition();
-            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) tools.getPlayerEntityFromUUIDByTickEvent(player.getUniqueID());
-            if (serverPlayer != null) {
-                INamedContainerProvider containerProvider = createContainerProvider(player.world, player.getPosition());
-                NetworkHooks.openGui(serverPlayer, containerProvider, player.getPosition());
-            }
-        }
-    }
-
 
     // 在 HudClientEvent.java 中修改相关代码
     @SubscribeEvent

@@ -1,12 +1,12 @@
 package com.cookiewyq.aa_mbvd;
 
 import com.cookiewyq.aa_mbvd.blocks.ModBlocks;
-import com.cookiewyq.aa_mbvd.capability.IGetPlayerCourtRecordsTileEntityData;
+import com.cookiewyq.aa_mbvd.capability.Capabilities;
+import com.cookiewyq.aa_mbvd.capability.CourtRecordInventory;
 import com.cookiewyq.aa_mbvd.capability.IShowingEvidenceData;
 import com.cookiewyq.aa_mbvd.capability.ShowingEvidenceData;
-import com.cookiewyq.aa_mbvd.capability.getPlayerCourtRecordsTileEntityData;
 import com.cookiewyq.aa_mbvd.configs.ModConfigs;
-import com.cookiewyq.aa_mbvd.container.ModContainer;
+import com.cookiewyq.aa_mbvd.container.ModContainerTypes;
 import com.cookiewyq.aa_mbvd.enchantments.ModEnchantments;
 import com.cookiewyq.aa_mbvd.entities.ModEntityTypes;
 import com.cookiewyq.aa_mbvd.events.ModForgeEvents;
@@ -15,7 +15,7 @@ import com.cookiewyq.aa_mbvd.items.ModItems;
 import com.cookiewyq.aa_mbvd.keyBinding.ModKeyBindings;
 import com.cookiewyq.aa_mbvd.network.Networking;
 import com.cookiewyq.aa_mbvd.renderers.PhoenixWrightRenderer;
-import com.cookiewyq.aa_mbvd.screen.CourtRecordsGUI;
+import com.cookiewyq.aa_mbvd.screen.CourtRecordScreen;
 import com.cookiewyq.aa_mbvd.sound.ModSounds;
 import com.cookiewyq.aa_mbvd.tileentity.ModTileEntities;
 import com.cookiewyq.aa_mbvd.villagers.ModPOIs;
@@ -66,7 +66,7 @@ public class AA_MbvdMod {
         ModBlocks.register(eventBus);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ModConfigs.COMMON_CONFIG);
         Networking.registerMessage();
-        ModContainer.register(eventBus);
+        ModContainerTypes.register(eventBus);
         ModTileEntities.register(eventBus);
         ModEnchantments.register(eventBus);
         ModPOIs.register(eventBus);
@@ -80,6 +80,8 @@ public class AA_MbvdMod {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
         // Register the doClientStuff method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+
+        eventBus.addListener(Capabilities::registerCapabilities);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -104,8 +106,10 @@ public class AA_MbvdMod {
                     event.addCapability(new ResourceLocation(AA_MbvdMod.MOD_ID, "showing_evidence_data"),
                             new IShowingEvidenceData.Provider());
 
-                    event.addCapability(new ResourceLocation(AA_MbvdMod.MOD_ID, "court_records_data"),
-                            new IGetPlayerCourtRecordsTileEntityData.Provider());
+//                    if (!event.getObject().getCapability(Capabilities.COURT_RECORD_INVENTORY_CAPABILITY).isPresent()) {
+//                        event.addCapability(new ResourceLocation(AA_MbvdMod.MOD_ID, "court_record_inventory"),
+//                                new CourtRecordInventory.Provider());
+//                    }
 
                 }
             }
@@ -114,19 +118,6 @@ public class AA_MbvdMod {
 
     private void setup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            // 注册能力
-            CapabilityManager.INSTANCE.register(
-                    IShowingEvidenceData.class,
-                    new ShowingEvidenceData.Storage(),
-                    ShowingEvidenceData::new
-            );
-
-            CapabilityManager.INSTANCE.register(
-                    IGetPlayerCourtRecordsTileEntityData.class,
-                    new getPlayerCourtRecordsTileEntityData.Storage(),
-                    getPlayerCourtRecordsTileEntityData::new
-            );
-
             MinecraftEvidences.register();
             GeckoLib.initialize();
         });
@@ -138,8 +129,8 @@ public class AA_MbvdMod {
         // 添加这一行来注册容器屏幕
         event.enqueueWork(() -> {
             net.minecraft.client.gui.ScreenManager.registerFactory(
-                    ModContainer.COURTRECORDS_CONTAINER.get(),
-                    CourtRecordsGUI::new
+                    ModContainerTypes.COURTRECORDS_CONTAINER.get(),
+                    CourtRecordScreen::new
             );
         });
 

@@ -1,32 +1,35 @@
 package com.cookiewyq.aa_mbvd.container;
 
 import com.cookiewyq.aa_mbvd.AA_MbvdMod;
+import com.cookiewyq.aa_mbvd.capability.Capabilities;
+import com.cookiewyq.aa_mbvd.capability.CourtRecordContainer;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class ModContainer {
+public class ModContainerTypes {
 
     public static DeferredRegister<ContainerType<?>> CONTAINERS
             = DeferredRegister.create(ForgeRegistries.CONTAINERS, AA_MbvdMod.MOD_ID);
 
-    public static final RegistryObject<ContainerType<CourtRecordsContainer>>
+    public static final RegistryObject<ContainerType<CourtRecordContainer>>
             COURTRECORDS_CONTAINER =
             CONTAINERS.register("court_records_container",
                     () -> IForgeContainerType.create(((windowId, inv, data) -> {
-                        BlockPos pos = data.readBlockPos();
-                        World world = inv.player.getEntityWorld();
-                        return new CourtRecordsContainer(windowId, world, pos, inv, inv.player);
+                        IItemHandlerModifiable handler = inv.player.getCapability(Capabilities.COURT_RECORD_INVENTORY_CAPABILITY)
+                                .orElseThrow(() -> new IllegalStateException("Court record capability not found"));
+                        return new CourtRecordContainer(windowId, inv, handler);
                     }
                     )));
 
     public static void register(IEventBus eventBus) {
         CONTAINERS.register(eventBus);
     }
-
 }

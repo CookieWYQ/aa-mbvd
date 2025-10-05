@@ -38,5 +38,8 @@
 
   "curios.identifier.charm_mayas_magatama": "勾玉",
   "curios.identifier.charm_badge": "徽章",
-  "screen.court_records": "Court Records"
+
+  "screen.court_records": "法庭记录",
+
+  "container.court_record": "法庭记录"
 }
