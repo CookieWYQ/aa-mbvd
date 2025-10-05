@@ -1,5 +1,6 @@
 package com.cookiewyq.aa_mbvd.capability;
 
+import com.cookiewyq.aa_mbvd.container.CourtRecordInventory;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -15,6 +16,9 @@ public class Capabilities {
     @CapabilityInject(CourtRecordInventory.class)
     public static Capability<CourtRecordInventory> COURT_RECORD_INVENTORY_CAPABILITY;
 
+    @CapabilityInject(Configable.class)
+    public static Capability<Configable> CONFIGABLE_CAPABILITY;
+
     @SubscribeEvent
     public static void registerCapabilities(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
@@ -28,6 +32,12 @@ public class Capabilities {
                     CourtRecordInventory.class,
                     new CourtRecordInventory(),
                     CourtRecordInventory::new
+            );
+
+            CapabilityManager.INSTANCE.register(
+                    Configable.class,
+                    new Configable.Storage(),//TODO 添加配置
+                    Configable::new
             );
         });
     }

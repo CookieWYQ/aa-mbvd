@@ -1,5 +1,6 @@
-package com.cookiewyq.aa_mbvd.capability;
+package com.cookiewyq.aa_mbvd.container;
 
+import com.cookiewyq.aa_mbvd.capability.Capabilities;
 import com.cookiewyq.aa_mbvd.configs.ModConfigs;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.item.ItemStack;
@@ -172,16 +173,27 @@ public class CourtRecordInventory implements IItemHandlerModifiable, Capability.
         int savedRows = compound.contains("rows") ? compound.getInt("rows") : 3;
         int currentRows = ModConfigs.COURT_RECORD_ROWS.get();
 
+        // 调整大小时保留原有物品
         if (savedRows != currentRows || instance.items.size() != currentRows * 9) {
+            NonNullList<ItemStack> oldItems = instance.items;
             instance.items = NonNullList.withSize(currentRows * 9, ItemStack.EMPTY);
-        } else {
-            Collections.fill(instance.items, ItemStack.EMPTY);
+
+            // 复制原有物品到新列表
+            int minSize = Math.min(oldItems.size(), instance.items.size());
+            for (int i = 0; i < minSize; i++) {
+                if (!oldItems.get(i).isEmpty()) {
+                    instance.items.set(i, oldItems.get(i).copy());
+                }
+            }
         }
 
+        // 读取保存的物品
         for (int i = 0; i < instance.items.size(); i++) {
             if (compound.contains("slot_" + i)) {
                 instance.items.set(i, ItemStack.read(compound.getCompound("slot_" + i)));
             }
         }
     }
+
+
 }
