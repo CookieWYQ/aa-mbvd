@@ -24,7 +24,7 @@ public class PlayerDataEvents {
         if (event.getObject() instanceof PlayerEntity) {
             // 为玩家实体附加法庭记录能力
             event.addCapability(new ResourceLocation(AA_MbvdMod.MOD_ID, "court_record_inventory"),
-                    new CourtRecordInventory.Provider());
+                    new CourtRecordInventory());
         }
 
         if (event.getObject() instanceof LivingEntity) {

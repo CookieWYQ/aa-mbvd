@@ -24,10 +24,9 @@ public class CourtRecordContainerProvider implements INamedContainerProvider {
     @Nullable
     @Override
     public Container createMenu(int windowId, PlayerInventory playerInventory, PlayerEntity player) {
-        IItemHandlerModifiable courtRecordInventory = player.getCapability(Capabilities.COURT_RECORD_INVENTORY_CAPABILITY)
-                .orElseThrow(() -> new IllegalStateException("Court record capability not found"));
-        return new CourtRecordContainer(windowId, playerInventory, courtRecordInventory);
+        return new CourtRecordContainer(windowId, playerInventory, getCourtRecordInventory(player));
     }
+
 
     private IItemHandlerModifiable getCourtRecordInventory(PlayerEntity player) {
         // 从玩家的能力中获取法庭记录库存

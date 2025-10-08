@@ -63,6 +63,12 @@ public class CourtRecordContainer extends Container {
         }
     }
 
+    @Override
+    public void onContainerClosed(PlayerEntity player) {
+        player.inventory.markDirty();
+        super.onContainerClosed(player);
+    }
+
     // 处理Shift+点击物品转移
     @Override
     public ItemStack transferStackInSlot(PlayerEntity player, int index) {
@@ -98,6 +104,7 @@ public class CourtRecordContainer extends Container {
             } else {
                 slot.onSlotChanged();
             }
+            player.inventory.markDirty();
         }
         return itemstack;
     }
@@ -109,6 +116,7 @@ public class CourtRecordContainer extends Container {
 
     // 自定义槽位类
     private static class CourtRecordSlot extends SlotItemHandler {
+
         public CourtRecordSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
             super(itemHandler, index, xPosition, yPosition);
         }
@@ -117,5 +125,18 @@ public class CourtRecordContainer extends Container {
         public boolean isItemValid(@Nonnull ItemStack stack) {
             return this.getItemHandler().isItemValid(this.getSlotIndex(), stack);
         }
+
+        @Override
+        public void onSlotChange(@Nonnull ItemStack oldStackIn, @Nonnull ItemStack newStackIn) {
+            super.onSlotChange(oldStackIn, newStackIn);
+            // 不再尝试调用不存在的方法
+        }
+
+        @Override
+        public void onSlotChanged() {
+            super.onSlotChanged();
+            // 这里不需要特殊处理，Forge会处理ItemStackHandler的脏标记
+        }
     }
+
 }

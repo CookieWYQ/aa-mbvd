@@ -19,7 +19,7 @@ public class ModContainerTypes {
             COURTRECORDS_CONTAINER =
             CONTAINERS.register("court_records_container",
                     () -> IForgeContainerType.create(((windowId, inv, data) -> {
-                        IItemHandlerModifiable handler = inv.player.getCapability(Capabilities.COURT_RECORD_INVENTORY_CAPABILITY)
+                        IItemHandlerModifiable handler = (IItemHandlerModifiable) inv.player.getCapability(Capabilities.COURT_RECORD_INVENTORY_CAPABILITY)
                                 .orElseThrow(() -> new IllegalStateException("Court record capability not found"));
                         return new CourtRecordContainer(windowId, inv, handler);
                     }
