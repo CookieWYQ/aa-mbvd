@@ -68,32 +68,31 @@ public class ModForgeEvents {
                         ", is MetalDetector: " + (itemStack.getItem() instanceof MetalDetector) +
                         ", level > 0: " + (level > 0));
             }
-        } else if (source.getTrueSource() != null && source.getTrueSource() instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) source.getTrueSource();
-            ItemStack itemStack = player.getHeldItemMainhand();
-            System.out.println("Player attacking with: " + itemStack.getItem().getRegistryName());
-
-            int level = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.BOOM_ENCHANTMENT.get(), itemStack);
-            System.out.println("Boom enchantment level: " + level);
-
-            if (level > 0) {
-                System.out.println("Applying boom effect");
-                entity.setMotion(0, 1, 0);
-                entity.addPotionEffect(new EffectInstance(Effects.GLOWING, 100, 0));
-                player.world.createExplosion(
-                        entity,
-                        entity.getPosX(),
-                        entity.getPosY(),
-                        entity.getPosZ(),
-                        level,
-                        Explosion.Mode.DESTROY
-                );
-                itemStack.damageItem(level, player, (e) -> e.sendBreakAnimation(Hand.MAIN_HAND));
-            } else {
-                System.out.println("No boom enchantment found");
-            }
-        }
+        } // else if (source.getTrueSource() != null && source.getTrueSource() instanceof PlayerEntity) {
+//            PlayerEntity player = (PlayerEntity) source.getTrueSource();
+//            ItemStack itemStack = player.getHeldItemMainhand();
+//            System.out.println("Player attacking with: " + itemStack.getItem().getRegistryName());
+//
+//            int level = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.BOOM_ENCHANTMENT.get(), itemStack);
+//            System.out.println("Boom enchantment level: " + level);
+//
+//            if (level > 0) {
+//                System.out.println("Applying boom effect");
+//                entity.setMotion(0, 1, 0);
+//                entity.addPotionEffect(new EffectInstance(Effects.GLOWING, 100, 0));
+//                player.world.createExplosion(
+//                        entity,
+//                        entity.getPosX(),
+//                        entity.getPosY(),
+//                        entity.getPosZ(),
+//                        level,
+//                        Explosion.Mode.DESTROY
+//                );
+//                itemStack.damageItem(level, player, (e) -> e.sendBreakAnimation(Hand.MAIN_HAND));
+//            } else {
+//                System.out.println("No boom enchantment found");
+//            }
+//        }
         System.out.println("=== End LivingHurtEvent DEBUG ===");
     }
-
 }

@@ -35,6 +35,7 @@ authors="CallMeACookieWYQ" #optional
 description='''
 God Gold
 素材来源: 逆转裁判中文wiki B站逆转裁判视频(不是使用他人原创素材，是使用官方素材，不过是从别人的视频里面截的)
+
 '''
 ## A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 #[[dependencies.${mod_id}]] #optional

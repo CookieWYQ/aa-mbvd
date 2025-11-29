@@ -49,6 +49,8 @@ public class ModItems {
 
     public static final RegistryObject<Item> PHOTO_annihilator_killer = PhotoHelper.registryPhoto("photo_annihilator_killer", 874, 640);
 
+    public static final RegistryObject<Item> PHOTO_king_neil = PhotoHelper.registryPhoto("photo_king_neil", 960, 640);
+
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

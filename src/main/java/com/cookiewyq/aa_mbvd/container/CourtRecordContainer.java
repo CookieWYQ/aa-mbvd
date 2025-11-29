@@ -1,11 +1,17 @@
 package com.cookiewyq.aa_mbvd.container;
 
 import com.cookiewyq.aa_mbvd.configs.ModConfigs;
+import com.cookiewyq.aa_mbvd.network.Networking;
+import com.cookiewyq.aa_mbvd.network.sendPacks.GetClientCourtRecordDataSendPack;
+import com.cookiewyq.aa_mbvd.network.sendPacks.GetServerCourtRecordDataSendPack;
+import com.cookiewyq.aa_mbvd.network.sendPacks.UpdateCourtRecordDataSendPack;
 import com.cookiewyq.aa_mbvd.screen.CourtRecordScreen;
 import com.cookiewyq.aa_mbvd.util.Pos2D;
+import com.cookiewyq.aa_mbvd.worldSavedData.CourtRecordSaveData;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
@@ -23,10 +29,11 @@ import static com.cookiewyq.aa_mbvd.container.ModContainerTypes.COURTRECORDS_CON
 public class CourtRecordContainer extends Container {
 
     private final IItemHandlerModifiable courtRecordInventory;
+    private Inventory courtRecordInventoryHandle;
     private final int courtRecordRows;
     private CourtRecordScreen courtRecordScreen;
     private final PlayerInventory playerInventory;
-    private boolean hasAddedSlots = false;
+    public boolean hasAddedSlots = false;
 
     public CourtRecordContainer(int windowId, PlayerInventory playerInventory, IItemHandlerModifiable courtRecordInventory) {
         super(COURTRECORDS_CONTAINER.get(), windowId);
@@ -37,31 +44,88 @@ public class CourtRecordContainer extends Container {
 
     public void addSlots(CourtRecordScreen screen) {
         if (hasAddedSlots) return;
-        hasAddedSlots = true;
 
         this.courtRecordScreen = screen;
 
+        // Create empty slots immediately
+        createEmptySlots(screen);
+
+        // Then request data from server
+        loadFromPlayer();
+    }
+
+    private void createEmptySlots(CourtRecordScreen screen) {
         int xOffset = 1;
         int yOffset = 1;
 
-        // 添加法庭记录槽位 (索引 0 到 courtRecordRows*9-1)
+        // Add court record slots (indices 0 to courtRecordRows*9-1)
         for (int i = 0; i < courtRecordRows * 9; i++) {
             Pos2D pos = screen.getSlotPosition(i);
-            this.addSlot(new CourtRecordSlot(courtRecordInventory, i, xOffset + pos.getX(), yOffset + pos.getY()));
+            this.addSlot(new CourtRecordSlot(courtRecordInventory, i, xOffset + pos.getX(), yOffset + pos.getY()) {
+                @Override
+                public void onSlotChanged() {
+                    super.onSlotChanged();
+                    saveToPlayer();
+                }
+            });
         }
 
-        // 添加玩家物品栏槽位(27个) (索引 courtRecordRows*9 到 courtRecordRows*9+26)
+        // Add player inventory slots (27 slots) (indices courtRecordRows*9 to courtRecordRows*9+26)
         for (int i = 0; i < 27; i++) {
             Pos2D pos = screen.getSlotPosition(courtRecordRows * 9 + i);
             this.addSlot(new Slot(playerInventory, i + 9, xOffset + pos.getX(), yOffset + pos.getY()));
         }
 
-        // 添加快捷栏槽位(9个) (索引 courtRecordRows*9+27 到 courtRecordRows*9+35)
+        // Add hotbar slots (9 slots) (indices courtRecordRows*9+27 to courtRecordRows*9+35)
         for (int i = 0; i < 9; i++) {
             Pos2D pos = screen.getSlotPosition(courtRecordRows * 9 + 27 + i);
             this.addSlot(new Slot(playerInventory, i, xOffset + pos.getX(), yOffset + pos.getY()));
         }
+
+        hasAddedSlots = true;
     }
+
+    public void updateSlotsWithData(Inventory inventoryWithData) {
+        // Populate the slots with actual data once it arrives
+        for (int i = 0; i < Math.min(courtRecordRows * 9, inventoryWithData.getSizeInventory()); i++) {
+            courtRecordInventory.setStackInSlot(i, inventoryWithData.getStackInSlot(i).copy());
+        }
+        // Mark the container as dirty to ensure the GUI updates
+        this.detectAndSendChanges();
+    }
+
+    private void loadFromPlayer() {
+        // Only send network request on client side
+        if (!playerInventory.player.world.isRemote) {
+            // Server-side already has the data or will provide it through packets
+            return;
+        }
+        System.out.println("Sending request to server for court record data");
+        Networking.INSTANCE.sendToServer(new GetServerCourtRecordDataSendPack(playerInventory.player.getUniqueID()));
+    }
+
+    private void saveToPlayer() {
+        // 创建一个适配器将 IItemHandlerModifiable 转换为 Inventory
+        Inventory adapterInventory = new Inventory(courtRecordRows * 9) {
+            @Override
+            public ItemStack getStackInSlot(int index) {
+                return courtRecordInventory.getStackInSlot(index);
+            }
+
+            @Override
+            public void setInventorySlotContents(int index, ItemStack stack) {
+                courtRecordInventory.setStackInSlot(index, stack);
+            }
+        };
+
+        // 复制所有物品到适配器
+        for (int i = 0; i < courtRecordRows * 9; i++) {
+            adapterInventory.setInventorySlotContents(i, courtRecordInventory.getStackInSlot(i));
+        }
+
+        Networking.INSTANCE.sendToServer(new UpdateCourtRecordDataSendPack(playerInventory.player.getUniqueID(), adapterInventory));
+    }
+
 
     @Override
     public void onContainerClosed(PlayerEntity player) {
@@ -128,8 +192,7 @@ public class CourtRecordContainer extends Container {
 
         @Override
         public void onSlotChange(@Nonnull ItemStack oldStackIn, @Nonnull ItemStack newStackIn) {
-            super.onSlotChange(oldStackIn, newStackIn);
-            // 不再尝试调用不存在的方法
+
         }
 
         @Override

@@ -2,10 +2,7 @@
 package com.cookiewyq.aa_mbvd.network;
 
 import com.cookiewyq.aa_mbvd.AA_MbvdMod;
-import com.cookiewyq.aa_mbvd.network.sendPacks.LittleMatterHeadDisplayPacket;
-import com.cookiewyq.aa_mbvd.network.sendPacks.LittleMatterSendPacket;
-import com.cookiewyq.aa_mbvd.network.sendPacks.OpenCourtRecordScreenPacket;
-import com.cookiewyq.aa_mbvd.network.sendPacks.ShowingEvidenceSendPacket;
+import com.cookiewyq.aa_mbvd.network.sendPacks.*;
 import com.cookiewyq.aa_mbvd.network.sendPacks.showingEvidenceEvents.GivingEffectEventSendPack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -58,6 +55,23 @@ public class Networking {
                 .consumer(OpenCourtRecordScreenPacket::handle)
                 .add();
 
+        INSTANCE.messageBuilder(UpdateCourtRecordDataSendPack.class, nextID())
+                .encoder(UpdateCourtRecordDataSendPack::toBytes)
+                .decoder(UpdateCourtRecordDataSendPack::new)
+                .consumer(UpdateCourtRecordDataSendPack::handle)
+                .add();
+
+        INSTANCE.messageBuilder(GetServerCourtRecordDataSendPack.class, nextID())
+                .encoder(GetServerCourtRecordDataSendPack::toBytes)
+                .decoder(GetServerCourtRecordDataSendPack::new)
+                .consumer(GetServerCourtRecordDataSendPack::handle)
+                .add();
+
+        INSTANCE.messageBuilder(GetClientCourtRecordDataSendPack.class, nextID())
+                .encoder(GetClientCourtRecordDataSendPack::toBytes)
+                .decoder(GetClientCourtRecordDataSendPack::new)
+                .consumer(GetClientCourtRecordDataSendPack::handle)
+                .add();
 
     }
 }

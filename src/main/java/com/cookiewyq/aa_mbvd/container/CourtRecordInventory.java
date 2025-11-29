@@ -38,7 +38,7 @@ public class CourtRecordInventory implements Capability.IStorage<CourtRecordInve
 
     /** 从 CompoundNBT 读回数据（用于加载） */
     public void deserializeNBT(CompoundNBT nbt) {
-        if (nbt == null) return;
+        if (nbt == null) handler.setSize(ModConfigs.COURT_RECORD_ROWS.get() * 9);
         if (nbt.contains("Items")) {
             handler.deserializeNBT(nbt.getCompound("Items"));
         }

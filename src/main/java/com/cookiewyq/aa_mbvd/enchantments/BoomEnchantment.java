@@ -1,6 +1,7 @@
 package com.cookiewyq.aa_mbvd.enchantments;
 
 import com.cookiewyq.aa_mbvd.items.custom.other.GantBoom;
+import com.cookiewyq.aa_mbvd.items.custom.other.MetalDetector;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -8,9 +9,12 @@ import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.world.Explosion;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -41,7 +45,7 @@ public class BoomEnchantment extends Enchantment {
 
     @Override
     public boolean canApply(ItemStack itemStack) {
-        return itemStack.getItem() instanceof SwordItem;
+        return itemStack.getItem() instanceof MetalDetector;
     }
 
     @Override
@@ -69,18 +73,42 @@ public class BoomEnchantment extends Enchantment {
         return super.canApplyTogether(enchantment) || enchantment.equals(Enchantments.SWEEPING);
     }
 
-    // 当实体受到伤害时触发的回调方法
+    // 当实体受到伤害时触发的回调方法（玩家攻击其他实体时）
     @Override
-    public void onEntityDamaged(LivingEntity damagedEntity, Entity Sourcentity, int damageAmount) {
+    public void onEntityDamaged(LivingEntity user, Entity target, int level) {
+        // 检查附魔等级是否有效
+        if (level > 0) {
+            // 给目标实体添加击飞效果
+            target.setMotion(target.getMotion().add(0, 1, 0));
 
+            // 给目标实体添加发光效果（如果是生物实体）
+            if (target instanceof LivingEntity) {
+                ((LivingEntity) target).addPotionEffect(new EffectInstance(Effects.GLOWING, 100, 0));
+            }
+
+            // 在目标位置创建爆炸
+            user.world.createExplosion(
+                    target,
+                    target.getPosX(),
+                    target.getPosY(),
+                    target.getPosZ(),
+                    level,
+                    Explosion.Mode.DESTROY
+            );
+
+            // 损坏武器
+            ItemStack weapon = user.getHeldItemMainhand();
+            weapon.damageItem(level, user, (e) -> e.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+        }
     }
+
 
     // 当用户（玩家）受到伤害时触发的回调方法
     @Override
     public void onUserHurt(LivingEntity damagedEntity, Entity sourcEntity, int damageAmount) {
         if (new Random().nextFloat() > 0.1) return;
         ItemStack itemStack = damagedEntity.getHeldItemMainhand();
-        if (itemStack.getItem() instanceof SwordItem) {
+        if (itemStack.getItem() instanceof MetalDetector) {
             // 使用 EnchantmentHelper 获取附魔等级
             int level = EnchantmentHelper.getEnchantmentLevel(this, itemStack);
             ItemStack i = damagedEntity.getHeldItemOffhand();
@@ -89,17 +117,19 @@ public class BoomEnchantment extends Enchantment {
                 gant_boom_num = i.getCount();
             }
             if (level > 0 && gant_boom_num > 0 && i.getItem() instanceof GantBoom) {
-                int n = Math.min(level, gant_boom_num);
                 // 触发爆炸效果
                 damagedEntity.world.createExplosion(
                         sourcEntity,
                         sourcEntity.getPosX(),
                         sourcEntity.getPosY() - 0.5,
                         sourcEntity.getPosZ(),
-                        n,
+                        level,
                         Explosion.Mode.BREAK
                 );
-                i.setCount(i.getCount() - n);
+                if (damagedEntity instanceof PlayerEntity) {
+                    damagedEntity.heal(damageAmount);
+                }
+                i.setCount(i.getCount() - 1);
             }
         }
     }
