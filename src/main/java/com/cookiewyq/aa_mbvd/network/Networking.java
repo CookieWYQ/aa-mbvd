@@ -1,4 +1,3 @@
-
 package com.cookiewyq.aa_mbvd.network;
 
 import com.cookiewyq.aa_mbvd.AA_MbvdMod;
@@ -18,6 +17,8 @@ public class Networking {
     }
 
     public static void registerMessage() {
+        AA_MbvdMod.PLOGGER.info("Registering network messages");
+        
         INSTANCE = NetworkRegistry.newSimpleChannel(
                 new ResourceLocation(AA_MbvdMod.MOD_ID, "mbvd"),
                 () -> VERSION,
@@ -49,29 +50,12 @@ public class Networking {
                 .consumer(GivingEffectEventSendPack::handle)
                 .add();
 
-        INSTANCE.messageBuilder(OpenCourtRecordScreenPacket.class, nextID())
-                .encoder(OpenCourtRecordScreenPacket::encode)
-                .decoder(OpenCourtRecordScreenPacket::new)
-                .consumer(OpenCourtRecordScreenPacket::handle)
+        INSTANCE.messageBuilder(OpenCourtRecordPacket.class, nextID())
+                .encoder(OpenCourtRecordPacket::encode)
+                .decoder(OpenCourtRecordPacket::new)
+                .consumer(OpenCourtRecordPacket::handle)
                 .add();
-
-        INSTANCE.messageBuilder(UpdateCourtRecordDataSendPack.class, nextID())
-                .encoder(UpdateCourtRecordDataSendPack::toBytes)
-                .decoder(UpdateCourtRecordDataSendPack::new)
-                .consumer(UpdateCourtRecordDataSendPack::handle)
-                .add();
-
-        INSTANCE.messageBuilder(GetServerCourtRecordDataSendPack.class, nextID())
-                .encoder(GetServerCourtRecordDataSendPack::toBytes)
-                .decoder(GetServerCourtRecordDataSendPack::new)
-                .consumer(GetServerCourtRecordDataSendPack::handle)
-                .add();
-
-        INSTANCE.messageBuilder(GetClientCourtRecordDataSendPack.class, nextID())
-                .encoder(GetClientCourtRecordDataSendPack::toBytes)
-                .decoder(GetClientCourtRecordDataSendPack::new)
-                .consumer(GetClientCourtRecordDataSendPack::handle)
-                .add();
-
+                
+        AA_MbvdMod.PLOGGER.info("Network messages registered");
     }
 }

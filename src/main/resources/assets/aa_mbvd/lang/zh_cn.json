@@ -42,5 +42,6 @@
 
   "screen.court_records": "法庭记录",
 
-  "container.court_record": "法庭记录"
+  "container.aa_mbvd.court_record.attorneys_badge":"§6法庭记录",
+  "container.aa_mbvd.court_record.prosbadge":"§b检察官手册"
 }

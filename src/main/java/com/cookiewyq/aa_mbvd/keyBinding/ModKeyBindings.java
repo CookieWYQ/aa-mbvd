@@ -1,5 +1,6 @@
 package com.cookiewyq.aa_mbvd.keyBinding;
 
+import com.cookiewyq.aa_mbvd.AA_MbvdMod;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -39,11 +40,16 @@ public class ModKeyBindings {
             "key.categories.aa_mbvd");
 
     public static void register(FMLClientSetupEvent event) {
+        AA_MbvdMod.PLOGGER.info("Registering key bindings");
+        AA_MbvdMod.PLOGGER.info("Open_Court_Records__Key default key: {}", Open_Court_Records__Key.getKey().getTranslationKey());
+        
         event.enqueueWork(() -> ClientRegistry.registerKeyBinding(Show_Badge__Key));
         event.enqueueWork(() -> ClientRegistry.registerKeyBinding(Objection__Key));
         event.enqueueWork(() -> ClientRegistry.registerKeyBinding(Holdit__Key));
         event.enqueueWork(() -> ClientRegistry.registerKeyBinding(Takethat__Key));
         event.enqueueWork(() -> ClientRegistry.registerKeyBinding(Show_Photo__Key));
         event.enqueueWork(() -> ClientRegistry.registerKeyBinding(Open_Court_Records__Key));
+        
+        AA_MbvdMod.PLOGGER.info("Key bindings registered");
     }
 }

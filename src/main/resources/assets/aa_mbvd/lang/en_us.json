@@ -42,5 +42,8 @@
 
   "screen.court_records": "Court Records",
 
-  "container.court_record": "Court Record"
+  "container.court_record": "Court Record",
+
+  "container.aa_mbvd.court_record.attorneys_badge":"§6Court Record",
+  "container.aa_mbvd.court_record.prosbadge":"§bProsecutor's Handbook"
 }

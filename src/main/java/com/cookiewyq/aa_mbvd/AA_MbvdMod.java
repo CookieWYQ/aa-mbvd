@@ -2,11 +2,13 @@ package com.cookiewyq.aa_mbvd;
 
 import com.cookiewyq.aa_mbvd.blocks.ModBlocks;
 import com.cookiewyq.aa_mbvd.capability.Capabilities;
+import com.cookiewyq.aa_mbvd.capability.CourtRecordProvider;
 import com.cookiewyq.aa_mbvd.capability.IShowingEvidenceData;
 import com.cookiewyq.aa_mbvd.configs.ModConfigs;
 import com.cookiewyq.aa_mbvd.container.ModContainerTypes;
 import com.cookiewyq.aa_mbvd.enchantments.ModEnchantments;
 import com.cookiewyq.aa_mbvd.entities.ModEntityTypes;
+import com.cookiewyq.aa_mbvd.events.KeyInputHandler;
 import com.cookiewyq.aa_mbvd.events.ModForgeEvents;
 import com.cookiewyq.aa_mbvd.items.MinecraftEvidences;
 import com.cookiewyq.aa_mbvd.items.ModItems;
@@ -20,6 +22,7 @@ import com.cookiewyq.aa_mbvd.villagers.ModPOIs;
 import com.cookiewyq.aa_mbvd.villagers.ModVillagerProfessions;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.entity.SpriteRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,6 +30,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -62,7 +66,9 @@ public class AA_MbvdMod {
         ModEntityTypes.register(eventBus);
         ModBlocks.register(eventBus);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ModConfigs.COMMON_CONFIG);
+        PLOGGER.info("About to register network messages");
         Networking.registerMessage();
+        PLOGGER.info("Network messages registered");
         ModContainerTypes.register(eventBus);
         ModTileEntities.register(eventBus);
         ModEnchantments.register(eventBus);
@@ -96,6 +102,11 @@ public class AA_MbvdMod {
             }
 
             @SubscribeEvent
+            public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+                ModForgeEvents.onPlayerTick(event);
+            }
+
+            @SubscribeEvent
             public void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
                 if (event.getObject() instanceof PlayerEntity) {
                     PLOGGER.debug("Fuck onAttachCapabilities");
@@ -103,14 +114,18 @@ public class AA_MbvdMod {
                     event.addCapability(new ResourceLocation(AA_MbvdMod.MOD_ID, "showing_evidence_data"),
                             new IShowingEvidenceData.Provider());
 
-//                    if (!event.getObject().getCapability(Capabilities.COURT_RECORD_INVENTORY_CAPABILITY).isPresent()) {
-//                        event.addCapability(new ResourceLocation(AA_MbvdMod.MOD_ID, "court_record_inventory"),
-//                                new CourtRecordInventory.Provider());
-//                    }
+                    if (!event.getObject().getCapability(Capabilities.COURT_RECORD_CAPABILITY).isPresent()) {
+                        event.addCapability(new ResourceLocation(AA_MbvdMod.MOD_ID, "court_record_inventory"),
+                                new CourtRecordProvider());
+                    }
 
                 }
             }
         });
+        
+        // 显式注册按键事件监听器
+        PLOGGER.info("[DEBUG] Registering KeyInputHandler");
+        MinecraftForge.EVENT_BUS.register(KeyInputHandler.class);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -125,7 +140,7 @@ public class AA_MbvdMod {
 
         // 添加这一行来注册容器屏幕
         event.enqueueWork(() -> {
-            net.minecraft.client.gui.ScreenManager.registerFactory(
+            ScreenManager.registerFactory(
                     ModContainerTypes.COURTRECORDS_CONTAINER.get(),
                     CourtRecordScreen::new
             );

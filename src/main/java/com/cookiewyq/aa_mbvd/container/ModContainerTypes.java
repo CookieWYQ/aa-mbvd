@@ -2,6 +2,7 @@ package com.cookiewyq.aa_mbvd.container;
 
 import com.cookiewyq.aa_mbvd.AA_MbvdMod;
 import com.cookiewyq.aa_mbvd.capability.Capabilities;
+import com.cookiewyq.aa_mbvd.capability.ICourtRecordCapability;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -18,14 +19,16 @@ public class ModContainerTypes {
     public static final RegistryObject<ContainerType<CourtRecordContainer>>
             COURTRECORDS_CONTAINER =
             CONTAINERS.register("court_records_container",
-                    () -> IForgeContainerType.create(((windowId, inv, data) -> {
-                        IItemHandlerModifiable handler = (IItemHandlerModifiable) inv.player.getCapability(Capabilities.COURT_RECORD_INVENTORY_CAPABILITY)
-                                .orElseThrow(() -> new IllegalStateException("Court record capability not found"));
-                        return new CourtRecordContainer(windowId, inv, handler);
-                    }
-                    )));
+                    () -> {
+                        AA_MbvdMod.PLOGGER.info("Registering CourtRecordContainer type");
+                        return IForgeContainerType.create(((windowId, inv, data) -> {
+                            AA_MbvdMod.PLOGGER.info("Creating CourtRecordContainer from ModContainerTypes");
+                            return new CourtRecordContainer(windowId, inv);
+                        }));
+                    });
 
     public static void register(IEventBus eventBus) {
+        AA_MbvdMod.PLOGGER.info("Registering container types");
         CONTAINERS.register(eventBus);
     }
 }

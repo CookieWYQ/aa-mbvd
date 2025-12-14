@@ -27,8 +27,6 @@ public class ShowEvidence {
                     PLOGGER.debug("Fuck processEvidenceCallback,In Opt,then Switch, state now: {}", state);
                     switch (state) {
                         case Pre:
-                            callback.onPreShowEvidence(itemStack, player);
-                            break;
                         case Post:
                             callback.onPostShowEvidence(itemStack, player);
                             break;

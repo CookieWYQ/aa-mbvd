@@ -1,6 +1,8 @@
 package com.cookiewyq.aa_mbvd.capability;
 
-import com.cookiewyq.aa_mbvd.container.CourtRecordInventory;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -13,8 +15,8 @@ public class Capabilities {
     @CapabilityInject(IShowingEvidenceData.class)
     public static Capability<IShowingEvidenceData> SHOWING_EVIDENCE_DATA_CAPABILITY;
 
-    @CapabilityInject(CourtRecordInventory.class)
-    public static Capability<CourtRecordInventory> COURT_RECORD_INVENTORY_CAPABILITY;
+    @CapabilityInject(ICourtRecordCapability.class)
+    public static Capability<ICourtRecordCapability> COURT_RECORD_CAPABILITY;
 
     @CapabilityInject(Configable.class)
     public static Capability<Configable> CONFIGABLE_CAPABILITY;
@@ -29,18 +31,17 @@ public class Capabilities {
             );
 
             CapabilityManager.INSTANCE.register(
-                    CourtRecordInventory.class,
-                    new CourtRecordInventory(),
-                    CourtRecordInventory::new
+                    ICourtRecordCapability.class,
+                    new CourtRecordStorage(),
+                    CourtRecordCapability::new
             );
 
             CapabilityManager.INSTANCE.register(
                     Configable.class,
-                    new Configable.Storage(),//TODO 添加配置
+                    new Configable.Storage(),
                     Configable::new
             );
         });
     }
-
-
 }
+

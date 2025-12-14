@@ -4,9 +4,13 @@ import com.cookiewyq.aa_mbvd.AA_MbvdMod;
 import com.cookiewyq.aa_mbvd.configs.ModConfigs;
 import com.cookiewyq.aa_mbvd.enchantments.ModEnchantments;
 import com.cookiewyq.aa_mbvd.items.custom.other.MetalDetector;
+import com.cookiewyq.aa_mbvd.keyBinding.ModKeyBindings;
+import com.cookiewyq.aa_mbvd.network.Networking;
+import com.cookiewyq.aa_mbvd.network.sendPacks.OpenCourtRecordPacket;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.potion.EffectInstance;
@@ -14,17 +18,25 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.WeakHashMap;
 
 import static com.cookiewyq.aa_mbvd.events.HudClientEvent.handleAutoDisplayTakethat;
 
 @Mod.EventBusSubscriber(modid = AA_MbvdMod.MOD_ID)
 public class ModForgeEvents {
+    // 记录玩家更新时间，用于定期保存
+    private static final Map<ServerPlayerEntity, Long> playerUpdateTimes = new WeakHashMap<>();
+    
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
         // 检查死亡实体是否是被玩家杀死的
@@ -94,5 +106,30 @@ public class ModForgeEvents {
 //            }
 //        }
         System.out.println("=== End LivingHurtEvent DEBUG ===");
+    }
+    
+    @SubscribeEvent
+    public static void onWorldTick(TickEvent.WorldTickEvent event) {
+        // 定期检查并保存玩家数据
+        if (event.phase == TickEvent.Phase.END && !event.world.isRemote && event.world instanceof ServerWorld) {
+            ServerWorld serverWorld = (ServerWorld) event.world;
+            long currentTime = System.currentTimeMillis();
+            
+            // 每30秒检查一次玩家数据
+            for (ServerPlayerEntity player : serverWorld.getPlayers()) {
+                Long lastUpdateTime = playerUpdateTimes.get(player);
+                if (lastUpdateTime == null || currentTime - lastUpdateTime > 30000) {
+                    playerUpdateTimes.put(player, currentTime);
+                    // 这里可以添加定期保存逻辑（如果需要）
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END && ModKeyBindings.Open_Court_Records__Key.isPressed()) {
+            Networking.INSTANCE.sendToServer(new OpenCourtRecordPacket(true));
+        }
     }
 }

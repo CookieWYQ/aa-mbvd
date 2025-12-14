@@ -1,16 +1,21 @@
 package com.cookiewyq.aa_mbvd.util;
 
 import com.cookiewyq.aa_mbvd.events.ModTickEvents;
+import com.cookiewyq.aa_mbvd.items.custom.badges.AttorneysBadge;
+import com.cookiewyq.aa_mbvd.items.custom.badges.Prosbadge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
@@ -573,4 +578,90 @@ public class tools {
             return ItemStack.EMPTY;
         }).orElse(ItemStack.EMPTY);
     }
+
+    public static boolean getWornCuriosType(PlayerEntity player) {
+        return CuriosApi.getCuriosHelper().getEquippedCurios(player)
+                .map(handler -> {
+                    for (int i = 0; i < handler.getSlots(); i++) {
+                        ItemStack stack = handler.getStackInSlot(i);
+                        if (stack.getItem() instanceof AttorneysBadge) {
+                            return true;
+                        } else if (stack.getItem() instanceof Prosbadge) {
+                            return false;
+                        }
+                    }
+                    return false;
+                })
+                .orElse(false);
+    }
+
+    public static boolean hasWornCurios(PlayerEntity player) {
+        return CuriosApi.getCuriosHelper().getEquippedCurios(player)
+                .map(handler -> {
+                    for (int i = 0; i < handler.getSlots(); i++) {
+                        ItemStack stack = handler.getStackInSlot(i);
+                        if (stack.getItem() instanceof AttorneysBadge || stack.getItem() instanceof Prosbadge) {
+                            return true;
+                        }
+                    }
+                    return false;
+                })
+                .orElse(false);
+    }
+
+    public static CompoundNBT writeToNBT(TranslationTextComponent component) {
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putString("key", component.getKey());
+
+        // 保存格式化参数
+        ListNBT argsList = new ListNBT();
+        for (Object arg : component.getFormatArgs()) {
+            CompoundNBT argNBT = new CompoundNBT();
+            if (arg instanceof ITextComponent) {
+                argNBT.putString("type", "text_component");
+                argNBT.putString("value", ITextComponent.Serializer.toJson(((ITextComponent) arg)));
+            } else if (arg != null) {
+                argNBT.putString("type", "string");
+                argNBT.putString("value", arg.toString());
+            } else {
+                argNBT.putString("type", "null");
+            }
+            argsList.add(argNBT);
+        }
+        nbt.put("formatArgs", argsList);
+
+        return nbt;
+    }
+
+
+    public static TranslationTextComponent readFromNBT(CompoundNBT nbt) {
+        String key = nbt.getString("key");
+
+        ListNBT argsList = nbt.getList("formatArgs", 10);
+        Object[] formatArgs = new Object[argsList.size()];
+
+        for (int i = 0; i < argsList.size(); i++) {
+            CompoundNBT argNBT = argsList.getCompound(i);
+            String type = argNBT.getString("type");
+
+            switch (type) {
+                case "text_component":
+                    try {
+                        formatArgs[i] = ITextComponent.Serializer.getComponentFromJson(argNBT.getString("value"));
+                    } catch (Exception e) {
+                        formatArgs[i] = new StringTextComponent("Error loading component");
+                    }
+                    break;
+                case "string":
+                    formatArgs[i] = argNBT.getString("value");
+                    break;
+                case "null":
+                    formatArgs[i] = null;
+                    break;
+            }
+        }
+
+        return new TranslationTextComponent(key, formatArgs);
+    }
+
 }
