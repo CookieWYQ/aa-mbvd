@@ -579,20 +579,20 @@ public class tools {
         }).orElse(ItemStack.EMPTY);
     }
 
-    public static boolean getWornCuriosType(PlayerEntity player) {
+    public static int getWornCuriosType(PlayerEntity player) {
         return CuriosApi.getCuriosHelper().getEquippedCurios(player)
                 .map(handler -> {
                     for (int i = 0; i < handler.getSlots(); i++) {
                         ItemStack stack = handler.getStackInSlot(i);
                         if (stack.getItem() instanceof AttorneysBadge) {
-                            return true;
+                            return 1;
                         } else if (stack.getItem() instanceof Prosbadge) {
-                            return false;
+                            return 2;
                         }
                     }
-                    return false;
+                    return -1;
                 })
-                .orElse(false);
+                .orElse(-1);
     }
 
     public static boolean hasWornCurios(PlayerEntity player) {

@@ -6,7 +6,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -24,4 +23,10 @@ public class CourtRecordSlot extends SlotItemHandler {
         return stack.getItem().getRegistryName() != null &&
                 "aa_mbvd".equals(stack.getItem().getRegistryName().getNamespace());
     }
+
+//    @Nullable
+//    @Override
+//    public Pair<ResourceLocation, ResourceLocation> getBackground() {
+//        return new Pair<>(BACKGROUND_TEXTURE, SLOT_TEXTURE);
+//    }
 }

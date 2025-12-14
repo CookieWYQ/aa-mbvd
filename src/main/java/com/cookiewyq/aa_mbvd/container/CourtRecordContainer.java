@@ -22,7 +22,7 @@ public class CourtRecordContainer extends Container {
 
     public CourtRecordContainer(int id, PlayerInventory inv) {
         super(ModContainerTypes.COURTRECORDS_CONTAINER.get(), id);
-        this.capSize = ModConfigs.COURT_RECORD_ROWS.get() * 9;
+        this.capSize = 4 * 9;
         this.playerInventory = inv;
 
         inv.player.getCapability(Capabilities.COURT_RECORD_CAPABILITY).ifPresent(cap -> {
@@ -64,7 +64,8 @@ public class CourtRecordContainer extends Container {
 
     public boolean isAttorneysBadge() {
         AtomicBoolean isAttorneysBadge = new AtomicBoolean(false);
-        playerInventory.player.getCapability(Capabilities.COURT_RECORD_CAPABILITY).ifPresent(cap -> isAttorneysBadge.set(cap.isAttorneysBadge()));
+        playerInventory.player.getCapability(Capabilities.COURT_RECORD_CAPABILITY).ifPresent(cap ->
+                isAttorneysBadge.set(cap.isAttorneysBadge()));
         return isAttorneysBadge.get();
     }
 

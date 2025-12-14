@@ -1,12 +1,14 @@
 package com.cookiewyq.aa_mbvd.events;
 
 import com.cookiewyq.aa_mbvd.AA_MbvdMod;
+import com.cookiewyq.aa_mbvd.capability.Capabilities;
 import com.cookiewyq.aa_mbvd.configs.ModConfigs;
 import com.cookiewyq.aa_mbvd.enchantments.ModEnchantments;
 import com.cookiewyq.aa_mbvd.items.custom.other.MetalDetector;
 import com.cookiewyq.aa_mbvd.keyBinding.ModKeyBindings;
 import com.cookiewyq.aa_mbvd.network.Networking;
 import com.cookiewyq.aa_mbvd.network.sendPacks.OpenCourtRecordPacket;
+import com.cookiewyq.aa_mbvd.util.tools;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -129,7 +131,10 @@ public class ModForgeEvents {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.END && ModKeyBindings.Open_Court_Records__Key.isPressed()) {
-            Networking.INSTANCE.sendToServer(new OpenCourtRecordPacket(true));
+            if (tools.getWornCuriosType(event.player)!=-1){
+                event.player.getCapability(Capabilities.COURT_RECORD_CAPABILITY).ifPresent(cap -> cap.setIsAttorneysBadge(tools.getWornCuriosType(event.player)==1));
+                Networking.INSTANCE.sendToServer(new OpenCourtRecordPacket(tools.getWornCuriosType(event.player)==1));
+            }
         }
     }
 }

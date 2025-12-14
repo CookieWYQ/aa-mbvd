@@ -1,5 +1,6 @@
 package com.cookiewyq.aa_mbvd.network.sendPacks;
 
+import com.cookiewyq.aa_mbvd.capability.Capabilities;
 import com.cookiewyq.aa_mbvd.container.CourtRecordContainer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -38,6 +39,7 @@ public class OpenCourtRecordPacket {
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity p = ctx.get().getSender();
             if (p != null) {
+                p.getCapability(Capabilities.COURT_RECORD_CAPABILITY).ifPresent(cap -> cap.setIsAttorneysBadge(isAttorneysBadge));
                 NetworkHooks.openGui(p, new INamedContainerProvider() {
                     @Nonnull
                     @Override

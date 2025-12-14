@@ -11,7 +11,7 @@ public class ModConfigs {
 
     public static ForgeConfigSpec.BooleanValue isShowLittleMatterWhenUsingKillingEntity;
     public static ForgeConfigSpec.BooleanValue isEnableOldSchoolShowingEvidenceHUD;
-    public static final ForgeConfigSpec.IntValue COURT_RECORD_ROWS;
+//    public static final ForgeConfigSpec.IntValue COURT_RECORD_ROWS;
 
     static {
         ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
@@ -32,9 +32,9 @@ public class ModConfigs {
                 .comment("If enable Old School Showing Evidence HUD.")
                 .define("is_enable_old_school_showing_evidence_hud", false);
 
-        COURT_RECORD_ROWS = COMMON_BUILDER
-                .comment("The number of court_record_rows (1-6)")
-                .defineInRange("court_record_rows", 3, 1, 6);
+//        COURT_RECORD_ROWS = COMMON_BUILDER
+//                .comment("The number of court_record_rows (1-6)")
+//                .defineInRange("court_record_rows", 3, 1, 6);
 
         // 在结束前pop
         COMMON_BUILDER.pop();

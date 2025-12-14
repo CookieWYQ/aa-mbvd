@@ -9,11 +9,16 @@ public class CourtRecordStorage implements Capability.IStorage<ICourtRecordCapab
 
     @Override
     public INBT writeNBT(Capability<ICourtRecordCapability> cap, ICourtRecordCapability inst, Direction side) {
-        return inst.getInventory().serializeNBT();
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putBoolean("isAttorneysBadge", inst.isAttorneysBadge());
+        nbt.put("inventory", inst.getInventory().serializeNBT());
+        return nbt;
     }
 
     @Override
     public void readNBT(Capability<ICourtRecordCapability> cap, ICourtRecordCapability inst, Direction side, INBT nbt) {
-        inst.getInventory().deserializeNBT((CompoundNBT) nbt);
+        CompoundNBT compoundNBT = (CompoundNBT) nbt;
+        inst.setIsAttorneysBadge(compoundNBT.getBoolean("isAttorneysBadge"));
+        inst.getInventory().deserializeNBT(compoundNBT.getCompound("inventory"));
     }
 }

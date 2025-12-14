@@ -14,15 +14,13 @@ public class CourtRecordCapability implements ICourtRecordCapability {
 
     private final ItemStack[] courtRecordSlots = new ItemStack[COURT_RECORD_SLOTS];
     private final ItemStack[] playerInventory = new ItemStack[PLAYER_SLOTS];
-    private boolean dirty = false;
 
-    // 新增字段：记录当前佩戴的饰品类型
     private boolean isAttorneysBadge = true;
 
     private final ItemStackHandler inventory;
 
     public CourtRecordCapability() {
-        inventory = new ItemStackHandler(ModConfigs.COURT_RECORD_ROWS.get() * 9) {
+        inventory = new ItemStackHandler(4 * 9) {
 
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
@@ -42,6 +40,7 @@ public class CourtRecordCapability implements ICourtRecordCapability {
         return isAttorneysBadge;
     }
 
+    @Override
     public void setIsAttorneysBadge(boolean isAttorneysBadge) {
         this.isAttorneysBadge = isAttorneysBadge;
     }
