@@ -2,7 +2,7 @@ package com.cookiewyq.aa_mbvd.events;
 
 import com.cookiewyq.aa_mbvd.AA_MbvdMod;
 import com.cookiewyq.aa_mbvd.capability.Capabilities;
-import com.cookiewyq.aa_mbvd.capability.CourtRecordProvider;
+import com.cookiewyq.aa_mbvd.capability.court_record.CourtRecordProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;

@@ -10,6 +10,7 @@ import com.cookiewyq.aa_mbvd.items.custom.other.MayasMagatama;
 import com.cookiewyq.aa_mbvd.items.custom.other.MetalDetector;
 import com.cookiewyq.aa_mbvd.items.custom.other.QiansHandPrintCloth;
 import com.cookiewyq.aa_mbvd.items.custom.photos.PhotoHelper;
+import com.cookiewyq.aa_mbvd.items.npc.NpcConverterItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
@@ -44,6 +45,9 @@ public class ModItems {
 
     public static final RegistryObject<Item> GantBoomItem = ITEMS.register("gant_boom",
             GantBoom::new);
+
+    public static final RegistryObject<Item> NpcConverterItem_ = ITEMS.register("npc_converter",
+            NpcConverterItem::new);
 
     // Photos
 

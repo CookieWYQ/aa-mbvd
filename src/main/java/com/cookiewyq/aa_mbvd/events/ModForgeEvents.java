@@ -73,10 +73,10 @@ public class ModForgeEvents {
             int level = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.BOOM_ENCHANTMENT.get(), itemStack);
             System.out.println("Boom enchantment level: " + level);
 
-            if (source.isExplosion() && itemStack.getItem() instanceof MetalDetector && level > 0) {
+            if ((source.isExplosion() || source.equals(DamageSource.FALL)) && itemStack.getItem() instanceof MetalDetector && level > 0) {
                 System.out.println("Applying explosion damage reduction");
                 event.setAmount(1);
-                itemStack.damageItem((int) (event.getAmount() / 10), player, (e) -> e.sendBreakAnimation(Hand.MAIN_HAND));
+                itemStack.damageItem((int) (event.getAmount() / 7.5), player, (e) -> e.sendBreakAnimation(Hand.MAIN_HAND));
             } else {
                 System.out.println("Condition not met - source.isExplosion(): " + source.isExplosion() +
                         ", is MetalDetector: " + (itemStack.getItem() instanceof MetalDetector) +

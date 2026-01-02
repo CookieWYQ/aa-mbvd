@@ -1,7 +1,7 @@
-package com.cookiewyq.aa_mbvd.capability;
+package com.cookiewyq.aa_mbvd.capability.showing_evidence;
 
+import com.cookiewyq.aa_mbvd.capability.Capabilities;
 import com.cookiewyq.aa_mbvd.events.HudClientEvent;
-import com.cookiewyq.aa_mbvd.events.ModTickEvents;
 import com.cookiewyq.aa_mbvd.util.tools;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

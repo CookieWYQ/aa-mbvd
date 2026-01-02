@@ -3,25 +3,27 @@ package com.cookiewyq.aa_mbvd.screen;
 import com.cookiewyq.aa_mbvd.AA_MbvdMod;
 import com.cookiewyq.aa_mbvd.configs.ModConfigs;
 import com.cookiewyq.aa_mbvd.container.CourtRecordContainer;
+import com.cookiewyq.aa_mbvd.sound.ModSounds;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import static com.cookiewyq.aa_mbvd.util.Res.BACKGROUND_TEXTURE;
+import static com.cookiewyq.aa_mbvd.util.Res.SLOT_TEXTURE;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class CourtRecordScreen extends ContainerScreen<CourtRecordContainer> {
     // GUI纹理路径 - 使用指定的gui.png作为背景
-    public static final ResourceLocation BACKGROUND_TEXTURE =
-            new ResourceLocation(AA_MbvdMod.MOD_ID, "textures/gui/gui.png");
-    public static final ResourceLocation SLOT_TEXTURE =
-            new ResourceLocation(AA_MbvdMod.MOD_ID, "textures/gui/slot.png");
 
     private final int imageWidth;
     private final int imageHeight;
@@ -48,6 +50,29 @@ public class CourtRecordScreen extends ContainerScreen<CourtRecordContainer> {
         this.imageWidth = 248; // 7个槽位 * 18 + 边框
         this.imageHeight = 166; // 标准容器高度
     }
+
+    @Override
+    public void closeScreen() {
+        super.closeScreen();
+        if (this.minecraft != null) {
+            this.minecraft.getSoundHandler().play(SimpleSound.master(ModSounds.CLOSE_DETAILS.get(), 1F, 3F));
+        }
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_R) { // R 键
+            // 播放关闭声音效果
+            if (this.minecraft != null) {
+                this.minecraft.getSoundHandler().play(SimpleSound.master(ModSounds.CLOSE_DETAILS.get(), 1.0F, 3.0F));
+            }
+            // 可以添加其他逻辑
+            this.closeScreen();
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
 
     @Override
     public void render(MatrixStack ms, int mouseX, int mouseY, float partialTicks) {
@@ -120,6 +145,6 @@ public class CourtRecordScreen extends ContainerScreen<CourtRecordContainer> {
 
     @Override
     public void drawGuiContainerForegroundLayer(MatrixStack ms, int x, int y) {
-        
+
     }
 }

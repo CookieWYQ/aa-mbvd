@@ -1,7 +1,7 @@
 package com.cookiewyq.aa_mbvd.events;
 
 import com.cookiewyq.aa_mbvd.capability.Capabilities;
-import com.cookiewyq.aa_mbvd.capability.ShowingEvidenceData;
+import com.cookiewyq.aa_mbvd.capability.showing_evidence.ShowingEvidenceData;
 import com.cookiewyq.aa_mbvd.util.tools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;

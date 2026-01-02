@@ -11,6 +11,7 @@
   "item.aa_mbvd.gant_boom": "Angry Damon Gant",
   "item.aa_mbvd.photo_annihilator_killer": "Annihilator Killer",
   "item.aa_mbvd.photo_king_neil": "King Neil",
+  "item.aa_mbvd.npc_converter": "NPC Converter",
 
   "block.aa_mbvd.silver_block": "Silver Block",
   "block.aa_mbvd.silver_ore": "Silver Ore",
@@ -45,5 +46,21 @@
   "container.court_record": "Court Record",
 
   "container.aa_mbvd.court_record.attorneys_badge":"§6Court Record",
-  "container.aa_mbvd.court_record.prosbadge":"§bProsecutor's Handbook"
+  "container.aa_mbvd.court_record.prosbadge":"§bProsecutor's Handbook",
+
+  "npc.aa_mbvd.default": "NPC",
+
+  "container.aa_mbvd.npc_editor": "NPC Editor",
+  "gui.confirm.convert_entity_to_npc_1": "Are you Sure turn this entity into a NPC?",
+  "gui.confirm.convert_entity_to_npc_2": "This can make you deal with it as a NPC.",
+  "npc.aa_mbvd.default.role_name": "NPC Name",
+  "npc.aa_mbvd.default.content": "Hello world!",
+  "npc.aa_mbvd.default.reply": "Hi.",
+  "screen.aa_mbvd.npc_editor.title": "NPC对话编辑器",
+  "screen.aa_mbvd.npc_editor.description.npc_name": "NPC名称:",
+  "screen.aa_mbvd.npc_editor.description.role_name": "角色名称:",
+  "screen.aa_mbvd.npc_editor.description.content": "对话内容:",
+  "screen.aa_mbvd.npc_editor.description.reply": "回复内容:",
+  "screen.aa_mbvd.npc_editor.description.next_node": "下一节点:",
+  "screen.aa_mbvd.npc_editor.save": "Save"
 }

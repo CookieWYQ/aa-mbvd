@@ -79,22 +79,36 @@ public class BoomEnchantment extends Enchantment {
         // 检查附魔等级是否有效
         if (level > 0) {
             // 给目标实体添加击飞效果
-            target.setMotion(target.getMotion().add(0, 1, 0));
+            target.setMotion(target.getMotion().add(0, 0.05 *  level, 0));
 
             // 给目标实体添加发光效果（如果是生物实体）
             if (target instanceof LivingEntity) {
                 ((LivingEntity) target).addPotionEffect(new EffectInstance(Effects.GLOWING, 100, 0));
             }
 
-            // 在目标位置创建爆炸
-            user.world.createExplosion(
-                    target,
-                    target.getPosX(),
-                    target.getPosY(),
-                    target.getPosZ(),
-                    level,
-                    Explosion.Mode.DESTROY
-            );
+            if (user instanceof PlayerEntity) {
+                if (user.getHeldItemOffhand().getItem() instanceof GantBoom) {
+                    int gant_boom_num = user.getHeldItemOffhand().getCount();
+
+                    if (gant_boom_num > 0) {
+
+                        int final_level = Math.min(level, gant_boom_num);
+
+                        user.world.createExplosion(
+                                user,
+                                user.getPosX(),
+                                user.getPosY(),
+                                user.getPosZ(),
+                                final_level,
+                                Explosion.Mode.DESTROY
+                        );
+
+                        if (!((PlayerEntity)user).isCreative()){
+                            user.getHeldItemOffhand().setCount(gant_boom_num - final_level);
+                        }
+                    }
+                }
+            }
 
             // 损坏武器
             ItemStack weapon = user.getHeldItemMainhand();

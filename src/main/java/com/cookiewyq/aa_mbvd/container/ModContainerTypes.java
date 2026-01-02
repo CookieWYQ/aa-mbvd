@@ -1,13 +1,10 @@
 package com.cookiewyq.aa_mbvd.container;
 
 import com.cookiewyq.aa_mbvd.AA_MbvdMod;
-import com.cookiewyq.aa_mbvd.capability.Capabilities;
-import com.cookiewyq.aa_mbvd.capability.ICourtRecordCapability;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -26,6 +23,11 @@ public class ModContainerTypes {
                             return new CourtRecordContainer(windowId, inv);
                         }));
                     });
+
+    public static final RegistryObject<ContainerType<NpcEditorContainer>>
+            NPC_EDITOR_CONTAINER =
+            CONTAINERS.register("aa_mbvd_container",
+                    () -> IForgeContainerType.create(((windowId, inv, data) -> new NpcEditorContainer(windowId, inv))));
 
     public static void register(IEventBus eventBus) {
         AA_MbvdMod.PLOGGER.info("Registering container types");

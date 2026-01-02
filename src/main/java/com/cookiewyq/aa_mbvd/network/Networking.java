@@ -55,7 +55,13 @@ public class Networking {
                 .decoder(OpenCourtRecordPacket::new)
                 .consumer(OpenCourtRecordPacket::handle)
                 .add();
-                
+
+        INSTANCE.messageBuilder(OpenNpcEditorPacket.class, nextID())
+                .encoder(OpenNpcEditorPacket::encode)
+                .decoder(OpenNpcEditorPacket::new)
+                .consumer(OpenNpcEditorPacket::handle)
+                .add();
+
         AA_MbvdMod.PLOGGER.info("Network messages registered");
     }
 }

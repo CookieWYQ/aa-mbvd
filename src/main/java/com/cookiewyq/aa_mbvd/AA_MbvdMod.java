@@ -2,8 +2,9 @@ package com.cookiewyq.aa_mbvd;
 
 import com.cookiewyq.aa_mbvd.blocks.ModBlocks;
 import com.cookiewyq.aa_mbvd.capability.Capabilities;
-import com.cookiewyq.aa_mbvd.capability.CourtRecordProvider;
-import com.cookiewyq.aa_mbvd.capability.IShowingEvidenceData;
+import com.cookiewyq.aa_mbvd.capability.court_record.CourtRecordProvider;
+import com.cookiewyq.aa_mbvd.capability.npc.AA_MBVD_NpcProvider;
+import com.cookiewyq.aa_mbvd.capability.showing_evidence.IShowingEvidenceData;
 import com.cookiewyq.aa_mbvd.configs.ModConfigs;
 import com.cookiewyq.aa_mbvd.container.ModContainerTypes;
 import com.cookiewyq.aa_mbvd.enchantments.ModEnchantments;
@@ -16,6 +17,7 @@ import com.cookiewyq.aa_mbvd.keyBinding.ModKeyBindings;
 import com.cookiewyq.aa_mbvd.network.Networking;
 import com.cookiewyq.aa_mbvd.renderers.PhoenixWrightRenderer;
 import com.cookiewyq.aa_mbvd.screen.CourtRecordScreen;
+import com.cookiewyq.aa_mbvd.screen.NpcEditorScreen;
 import com.cookiewyq.aa_mbvd.sound.ModSounds;
 import com.cookiewyq.aa_mbvd.tileentity.ModTileEntities;
 import com.cookiewyq.aa_mbvd.villagers.ModPOIs;
@@ -25,6 +27,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.entity.SpriteRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -118,7 +121,13 @@ public class AA_MbvdMod {
                         event.addCapability(new ResourceLocation(AA_MbvdMod.MOD_ID, "court_record_inventory"),
                                 new CourtRecordProvider());
                     }
+                }
 
+                if (event.getObject() instanceof MobEntity) {
+                    if (!event.getObject().getCapability(Capabilities.AA_MBVD_NPC_CAPABILITY).isPresent()) {
+                        event.addCapability(new ResourceLocation(AA_MbvdMod.MOD_ID, "aa_mbvd_npc"),
+                                new AA_MBVD_NpcProvider());
+                    }
                 }
             }
         });
@@ -143,6 +152,11 @@ public class AA_MbvdMod {
             ScreenManager.registerFactory(
                     ModContainerTypes.COURTRECORDS_CONTAINER.get(),
                     CourtRecordScreen::new
+            );
+
+            ScreenManager.registerFactory(
+                    ModContainerTypes.NPC_EDITOR_CONTAINER.get(),
+                    NpcEditorScreen::new
             );
         });
 

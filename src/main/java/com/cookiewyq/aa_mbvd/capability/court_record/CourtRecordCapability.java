@@ -1,6 +1,5 @@
-package com.cookiewyq.aa_mbvd.capability;
+package com.cookiewyq.aa_mbvd.capability.court_record;
 
-import com.cookiewyq.aa_mbvd.configs.ModConfigs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 

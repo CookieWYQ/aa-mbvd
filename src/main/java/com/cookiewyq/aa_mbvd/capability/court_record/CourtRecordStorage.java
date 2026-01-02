@@ -1,4 +1,4 @@
-package com.cookiewyq.aa_mbvd.capability;
+package com.cookiewyq.aa_mbvd.capability.court_record;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;

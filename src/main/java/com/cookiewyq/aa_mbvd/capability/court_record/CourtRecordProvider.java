@@ -1,5 +1,6 @@
-package com.cookiewyq.aa_mbvd.capability;
+package com.cookiewyq.aa_mbvd.capability.court_record;
 
+import com.cookiewyq.aa_mbvd.capability.Capabilities;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;

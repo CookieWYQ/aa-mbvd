@@ -2,12 +2,15 @@ package com.cookiewyq.aa_mbvd.network.sendPacks;
 
 import com.cookiewyq.aa_mbvd.capability.Capabilities;
 import com.cookiewyq.aa_mbvd.container.CourtRecordContainer;
+import com.cookiewyq.aa_mbvd.sound.ModSounds;
+import com.cookiewyq.aa_mbvd.util.tools;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -54,6 +57,7 @@ public class OpenCourtRecordPacket {
                         return new CourtRecordContainer(i, playerInventory);
                     }
                 });
+                p.world.playSound(null, p.getPosition(), ModSounds.OPEN_DETAILS.get(), p.getSoundCategory(), 3F, 1F);
             }
         });
         ctx.get().setPacketHandled(true);
