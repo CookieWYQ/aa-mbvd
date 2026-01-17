@@ -26,7 +26,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class Prosbadge extends ModThrowableItem implements IEvidenceCallback, ICurioItem {
+public class Prosbadge extends ModThrowableItem implements IEvidenceCallback, ICurioItem, IBadge {
     public Prosbadge() {
         super(new Properties()
                 .group(ModItemGroup.AA_MBVD_TAB)

@@ -15,21 +15,18 @@ public interface IAA_MBVD_NpcCapability extends INBTSerializable<INBT> {
 
     void setNpc(boolean npc);
 
-    ITextComponent getNpcName();
-
-    void setNpcName(ITextComponent npcName);
-
     List<AbstractDialogNode> getDialogNodes();
 
     void clearDialogNodes();
 
-    void setDialogNodeMap(Map<UUID, AbstractDialogNode> dialogMap);
-
     void addDialogNode(AbstractDialogNode node);
 
-    @Nullable
-    AbstractDialogNode getDialogNode(UUID uuid);
+    void removeDialogNode(AbstractDialogNode node);
 
     @Nullable
     AbstractDialogNode getCurrentNode();
+
+    void setCurrentNode(AbstractDialogNode node);
+
+    AbstractDialogNode getDialogNodeByID(String uuid);
 }

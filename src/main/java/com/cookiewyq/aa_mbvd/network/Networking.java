@@ -18,7 +18,7 @@ public class Networking {
 
     public static void registerMessage() {
         AA_MbvdMod.PLOGGER.info("Registering network messages");
-        
+
         INSTANCE = NetworkRegistry.newSimpleChannel(
                 new ResourceLocation(AA_MbvdMod.MOD_ID, "mbvd"),
                 () -> VERSION,
@@ -61,6 +61,13 @@ public class Networking {
                 .decoder(OpenNpcEditorPacket::new)
                 .consumer(OpenNpcEditorPacket::handle)
                 .add();
+
+        INSTANCE.messageBuilder(UpdateDialogNodePacket.class, nextID())
+                .encoder(UpdateDialogNodePacket::toBytes)
+                .decoder(UpdateDialogNodePacket::new)
+                .consumer(UpdateDialogNodePacket::handle)
+                .add();
+
 
         AA_MbvdMod.PLOGGER.info("Network messages registered");
     }

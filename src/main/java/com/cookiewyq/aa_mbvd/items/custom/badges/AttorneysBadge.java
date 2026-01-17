@@ -26,7 +26,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class AttorneysBadge extends ModThrowableItem implements IEvidenceCallback, ICurioItem {
+public class AttorneysBadge extends ModThrowableItem implements IEvidenceCallback, ICurioItem, IBadge {
 
     private LivingEntity showingGettingEntity;
 

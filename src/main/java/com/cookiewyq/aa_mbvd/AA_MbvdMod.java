@@ -36,6 +36,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -105,6 +106,17 @@ public class AA_MbvdMod {
             }
 
             @SubscribeEvent
+            public void onWorldSave(WorldEvent.Save event) {
+
+            }
+
+            @SubscribeEvent
+            public void onWorldLoad(WorldEvent.Load event) {
+
+            }
+
+
+            @SubscribeEvent
             public void onPlayerTick(TickEvent.PlayerTickEvent event) {
                 ModForgeEvents.onPlayerTick(event);
             }
@@ -131,7 +143,7 @@ public class AA_MbvdMod {
                 }
             }
         });
-        
+
         // 显式注册按键事件监听器
         PLOGGER.info("[DEBUG] Registering KeyInputHandler");
         MinecraftForge.EVENT_BUS.register(KeyInputHandler.class);
@@ -154,10 +166,10 @@ public class AA_MbvdMod {
                     CourtRecordScreen::new
             );
 
-            ScreenManager.registerFactory(
-                    ModContainerTypes.NPC_EDITOR_CONTAINER.get(),
-                    NpcEditorScreen::new
-            );
+//            ScreenManager.registerFactory(
+//                    ModContainerTypes.NPC_EDITOR_CONTAINER.get(),
+//                    NpcEditorScreen::new
+//            );
         });
 
         RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.BADGE.get(),

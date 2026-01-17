@@ -37,6 +37,7 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> GANT_BOOM_3000 = register("gant_boom_3000");
     public static final RegistryObject<SoundEvent> OPEN_DETAILS = register("open_details");
     public static final RegistryObject<SoundEvent> CLOSE_DETAILS = register("close_details");
+    public static final RegistryObject<SoundEvent> GODOT_COFFEE_IS_A_DARK_FRAGRANCE = register("godot_coffee_is_a_dark_fragrance");
 
     // 批量注册并存储到映射中
     public static void registerLittleMatterSounds() {

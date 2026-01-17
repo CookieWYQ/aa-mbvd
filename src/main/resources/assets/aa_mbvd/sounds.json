@@ -39,6 +39,14 @@
       }
     ]
   },
+  "godot_coffee_is_a_dark_fragrance": {
+    "sounds": [
+      {
+        "name": "aa_mbvd:godot_coffee_is_a_dark_fragrance",
+        "stream": true
+      }
+    ]
+  },
   "miles_edgeworth_holdit_en": {
     "sounds": [
       {

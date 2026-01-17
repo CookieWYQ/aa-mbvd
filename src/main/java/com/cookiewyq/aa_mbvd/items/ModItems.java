@@ -5,10 +5,7 @@ import com.cookiewyq.aa_mbvd.items.custom.badges.AttorneysBadge;
 import com.cookiewyq.aa_mbvd.items.custom.badges.Prosbadge;
 import com.cookiewyq.aa_mbvd.items.custom.ores.SilverIngot;
 import com.cookiewyq.aa_mbvd.items.custom.ores.SilverNugget;
-import com.cookiewyq.aa_mbvd.items.custom.other.GantBoom;
-import com.cookiewyq.aa_mbvd.items.custom.other.MayasMagatama;
-import com.cookiewyq.aa_mbvd.items.custom.other.MetalDetector;
-import com.cookiewyq.aa_mbvd.items.custom.other.QiansHandPrintCloth;
+import com.cookiewyq.aa_mbvd.items.custom.other.*;
 import com.cookiewyq.aa_mbvd.items.custom.photos.PhotoHelper;
 import com.cookiewyq.aa_mbvd.items.npc.NpcConverterItem;
 import net.minecraft.item.Item;
@@ -48,6 +45,9 @@ public class ModItems {
 
     public static final RegistryObject<Item> NpcConverterItem_ = ITEMS.register("npc_converter",
             NpcConverterItem::new);
+
+    public static final RegistryObject<Item> GodotCoffeeCupItem = ITEMS.register("godot_coffee_cup",
+            GodotCoffeeCup::new);
 
     // Photos
 

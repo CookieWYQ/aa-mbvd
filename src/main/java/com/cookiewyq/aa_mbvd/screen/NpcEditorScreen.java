@@ -2,287 +2,370 @@ package com.cookiewyq.aa_mbvd.screen;
 
 import com.cookiewyq.aa_mbvd.capability.Capabilities;
 import com.cookiewyq.aa_mbvd.capability.npc.nodes.AbstractDialogNode;
-import com.cookiewyq.aa_mbvd.container.NpcEditorContainer;
+import com.cookiewyq.aa_mbvd.capability.npc.nodes.CommonDialogNode;
+import com.cookiewyq.aa_mbvd.network.Networking;
+import com.cookiewyq.aa_mbvd.network.sendPacks.UpdateDialogNodePacket;
 import com.cookiewyq.aa_mbvd.util.Res;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import mcp.MethodsReturnNonnullByDefault;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static com.cookiewyq.aa_mbvd.AA_MbvdMod.PLOGGER;
-import static com.cookiewyq.aa_mbvd.util.Res.SLOT_TEXTURE;
+import java.util.ArrayList;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class NpcEditorScreen extends ContainerScreen<NpcEditorContainer> {
+public class NpcEditorScreen extends Screen {
+    public static final NpcEditorScreen INSTANCE = new NpcEditorScreen(new StringTextComponent("NpcEditorScreen"));
+    private ArrayList<AbstractDialogNode> dialogNodes = new ArrayList<>();
+    private int entityId;
+    private String currentNodeId;
 
-    private TextFieldWidget npcNameField;
-    private TextFieldWidget roleNameField;
-    private TextFieldWidget contentField;
-    private TextFieldWidget replyField;
-    private TextFieldWidget nextNodeField;
-    private final int imageWidth = 248; // 7个槽位 * 18 + 边框
-    private final int imageHeight = 166; // 标准容器高度
-    private final double scaled_x = (double) 231 / 331;
-    private final double scaled_y_backpack = (double) 81 / 640;
-    private final double scaled_y_hotbar = (double) 89 / 640;
+    private TextFieldWidget NPC_name_textField;
+    private TextFieldWidget NPC_content_textField;
+    private TextFieldWidget NPC_thisNode_textField;
+    private TextFieldWidget NPC_nextNode_textField;
 
-    private final int offset_y = -20;
+    private static final ResourceLocation BACKGROUND_LOCATION = Res.BACKGROUND_TEXTURE;
 
-    public NpcEditorScreen(NpcEditorContainer container, PlayerInventory inventory, ITextComponent title) {
-        super(container, inventory, title);
-        this.container.setScreen(this);
-    }
-
-    public int getOffset_y() {
-        return offset_y;
+    protected NpcEditorScreen(ITextComponent title) {
+        super(title);
     }
 
     @Override
-    protected void init() {
-        super.init();
+    public void init() {
 
-        PLOGGER.info("?Check isContainerNull: {}, isContainerCapNull: {}", container == null, container != null && container.cap == null);
+        if (this.minecraft != null) {
+            this.minecraft.keyboardListener.enableRepeatEvents(true);
+        }
 
-        // 添加保存按钮
-        addButton(new Button(guiLeft, guiTop - 40, 60, 20, new TranslationTextComponent("screen.aa_mbvd.npc_editor.save"), (button) -> saveData()));
+        // 初始化文本框组件
+        NPC_name_textField = new TextFieldWidget(this.font, this.width / 2, 20, 200, 20, new StringTextComponent(""));
+        NPC_content_textField = new TextFieldWidget(this.font, this.width / 2, 50, 200, 20, new StringTextComponent(""));
+        NPC_thisNode_textField = new TextFieldWidget(this.font, this.width / 2, 80, 200, 20, new StringTextComponent(""));
+        NPC_nextNode_textField = new TextFieldWidget(this.font, this.width / 2, 110, 200, 20, new StringTextComponent(""));
 
-        // 添加安全检查，防止container或container.cap为null
-//        if (container == null || container.cap == null) {
-//            // 如果容器或能力为空，仍然初始化UI组件以避免界面崩溃
-//            npcNameField = new TextFieldWidget(font, guiLeft + 120, guiTop + 10 - 5 + offset_y, 120, 20, new StringTextComponent("NPC名称"));
-//            roleNameField = new TextFieldWidget(font, guiLeft + 120, guiTop + 35 - 5 + offset_y, 120, 20, new StringTextComponent("角色名称"));
-//            contentField = new TextFieldWidget(font, guiLeft + 120, guiTop + 60 - 5 + offset_y, 120, 20, new StringTextComponent("对话内容"));
-//            replyField = new TextFieldWidget(font, guiLeft + 120, guiTop + 85 - 5 + offset_y, 120, 20, new StringTextComponent("回复内容"));
-//            nextNodeField = new TextFieldWidget(font, guiLeft + 120, guiTop + 110 - 5 + offset_y, 120, 20, new StringTextComponent("下一节点"));
-//
-//            npcNameField.setText("");
-//            roleNameField.setText("");
-//            contentField.setText("");
-//            replyField.setText("");
-//            nextNodeField.setText("");
-//
-//            addButton(npcNameField);
-//            addButton(roleNameField);
-//            addButton(contentField);
-//            addButton(replyField);
-//            addButton(nextNodeField);
-//            return;
-//        }
+        // 确保文本框被添加到children列表中
+        this.children.add(this.NPC_name_textField);
+        this.children.add(this.NPC_content_textField);
+        this.children.add(this.NPC_thisNode_textField);
+        this.children.add(this.NPC_nextNode_textField);
 
-        if (container == null) return;
+        reloadDialog();
+        reloadButtons();
+    }
 
-        PLOGGER.info("?In Screen init: container.npc={}, container.cap={}", container.npc, container.cap);
-        
-        // 如果容器的能力为null，尝试重新获取能力系统
-        if (container.npc != null && container.cap == null) {
-            PLOGGER.info("?Container capability is null, attempting to retrieve from NPC entity");
-            container.npc.getCapability(Capabilities.AA_MBVD_NPC_CAPABILITY).ifPresent(cap -> {
-                container.cap = cap;
-                PLOGGER.info("?Successfully retrieved capability from NPC entity");
+    public void setEntityId(int entityId) {
+        this.entityId = entityId;
+        reloadDialog();
+        reloadButtons();
+    }
+
+    private void reloadDialog() {
+        if (this.minecraft == null || this.minecraft.world == null) return;
+
+        Entity npc = this.minecraft.world.getEntityByID(entityId);
+        if (npc instanceof MobEntity) {
+            MobEntity mobEntity = (MobEntity) npc;
+            mobEntity.getCapability(Capabilities.AA_MBVD_NPC_CAPABILITY).ifPresent(cap -> {
+                this.dialogNodes = (ArrayList<AbstractDialogNode>) cap.getDialogNodes();
+                this.currentNodeId = this.dialogNodes.get(0).getID();
             });
-            if (container.cap == null) {
-                PLOGGER.warn("?Failed to retrieve NPC capability, this may cause issues");
+        }
+    }
+
+
+    private void reloadButtons() {
+
+        if (this.minecraft == null || this.minecraft.world == null) return;
+
+        this.buttons.clear();
+
+        for (int i = 0; i < dialogNodes.size(); i++) {
+            int finalI = i;
+            this.addButton(new Button(this.width / 2 - 250,
+                    i * 35 + 20,
+                    100,
+                    20,
+                    new StringTextComponent(this.dialogNodes.get(i).getID()), button -> {
+                this.currentNodeId = this.dialogNodes.get(finalI).getID();
+                this.NPC_name_textField.setText(this.dialogNodes.get(finalI).getRoleName().getString());
+                this.NPC_content_textField.setText(this.dialogNodes.get(finalI).getContent().getString());
+                this.NPC_thisNode_textField.setText(this.dialogNodes.get(finalI).getID());
+                this.NPC_nextNode_textField.setText(this.dialogNodes.get(finalI).getNextNodeId());
+
+                // 添加刷新界面的调用
+                refreshUI();
+            }));
+        }
+
+        this.addButton(new Button(this.width / 2 - 100,
+                35 + 120,
+                100,
+                20,
+                new TranslationTextComponent("screen.aa_mbvd.npc_editor.button.add"), button -> {
+            if (this.minecraft == null || this.minecraft.world == null) return;
+
+            Entity npc = this.minecraft.world.getEntityByID(entityId);
+            if (npc instanceof MobEntity) {
+                MobEntity mobEntity = (MobEntity) npc;
+                mobEntity.getCapability(Capabilities.AA_MBVD_NPC_CAPABILITY).ifPresent(cap -> {
+                    AbstractDialogNode node = new CommonDialogNode();
+                    // 修复：使用新的ID而不是getNextNodeId()
+//                    String newId = "node_" + System.currentTimeMillis(); // 生成唯一ID
+                    String newId = cap.getDialogNodeByID(this.currentNodeId).getNextNodeId();
+                    node.setID(newId);
+                    this.currentNodeId = newId;
+                    cap.addDialogNode(node);
+                });
+                // 刷新整个界面
+                reloadDialog();
+                reloadButtons();
             }
-        }
+        }));
 
-        AtomicReference<AbstractDialogNode> node = new AtomicReference<>();
-        // 添加安全检查，确保container.npc和container.cap不为null
-        if (container.npc != null && container.cap != null) {
-            node.set(container.cap.getCurrentNode());
-        } else {
-            // 如果能力仍然为null，使用空节点
-            node.set(null);
-        }
+        this.addButton(new Button(this.width / 2,
+                35 + 120,
+                100,
+                20,
+                new TranslationTextComponent("screen.aa_mbvd.npc_editor.button.delete"), button -> {
+            if (this.minecraft == null || this.minecraft.world == null) return;
 
-        // NPC名称输入框
-        npcNameField = new TextFieldWidget(font, guiLeft + 120, guiTop + 15 + offset_y, 120, 20, new TranslationTextComponent("screen.aa_mbvd.npc_editor.description.npc_name"));
-        String npcName = "";
-        if (container.cap != null && container.cap.getNpcName() != null) {
-            npcName = container.cap.getNpcName().getString();
-        }
-        npcNameField.setText(npcName);
-        addButton(npcNameField);
+            Entity npc = this.minecraft.world.getEntityByID(entityId);
+            if (npc instanceof MobEntity) {
+                MobEntity mobEntity = (MobEntity) npc;
+                mobEntity.getCapability(Capabilities.AA_MBVD_NPC_CAPABILITY).ifPresent(cap -> {
+                    if (cap.getDialogNodes().size() <= 1) return;
 
-        // 角色名称输入框
-        roleNameField = new TextFieldWidget(font, guiLeft + 120, guiTop + 40 + offset_y, 120, 20, new TranslationTextComponent("screen.aa_mbvd.npc_editor.description.role_name"));
-        if (node.get() != null) {
-            roleNameField.setText(node.get().getRoleName().getString());
-        } else {
-            roleNameField.setText("No Node");
-        }
-        addButton(roleNameField);
+                    // 删除当前节点
+                    AbstractDialogNode nodeToRemove = cap.getDialogNodeByID(currentNodeId);
+                    if (nodeToRemove != null) {
+                        cap.removeDialogNode(nodeToRemove);
 
-        // 对话内容输入框
-        contentField = new TextFieldWidget(font, guiLeft + 120, guiTop + 65 + offset_y, 120, 20, new TranslationTextComponent("screen.aa_mbvd.npc_editor.description.content"));
-        if (node.get() != null) {
-            contentField.setText(node.get().getContent().getString());
-        } else {
-            contentField.setText("No Node");
-        }
-        addButton(contentField);
+                        // 设置新的当前节点
+                        if (!cap.getDialogNodes().isEmpty()) {
+                            AbstractDialogNode firstNode = cap.getDialogNodes().get(0);
+                            this.currentNodeId = firstNode.getID();
 
-        // 回复内容输入框
-        replyField = new TextFieldWidget(font, guiLeft + 120, guiTop + 90 + offset_y, 120, 20, new TranslationTextComponent("screen.aa_mbvd.npc_editor.description.reply"));
-        if (node.get() != null) {
-            replyField.setText(node.get().getReply().getString());
-        } else {
-            replyField.setText("No Node");
-        }
-        addButton(replyField);
-
-        // 下一节点输入框
-        nextNodeField = new TextFieldWidget(font, guiLeft + 120, guiTop + 115 + offset_y, 120, 20, new TranslationTextComponent("screen.aa_mbvd.npc_editor.description.next_node"));
-        if (node.get() != null) {
-            UUID nextNodeId = node.get().getNextNodeId();
-            if (nextNodeId != null) {
-                AbstractDialogNode nextNode = null;
-                if (container.cap != null) {
-                    nextNode = container.cap.getDialogNode(nextNodeId);
-                }
-                if (nextNode != null) {
-                    nextNodeField.setText(nextNode.getUUID().toString());
-                } else {
-                    nextNodeField.setText(nextNodeId.toString());
-                }
-            } else {
-                nextNodeField.setText("");
+                            // 更新文本框内容
+                            this.NPC_name_textField.setText(firstNode.getRoleName().getString());
+                            this.NPC_content_textField.setText(firstNode.getContent().getString());
+                            this.NPC_thisNode_textField.setText(firstNode.getID());
+                            this.NPC_nextNode_textField.setText(firstNode.getNextNodeId());
+                        }
+                    }
+                });
+                // 刷新整个界面
+                reloadDialog();
+                reloadButtons();
             }
-        } else {
-            nextNodeField.setText("");
-        }
-        addButton(nextNodeField);
+        }));
 
+        this.addButton(new Button(this.width / 2 - 100,
+                35 + 145, // 使用动态计算的位置
+                200,
+                20,
+                new TranslationTextComponent("screen.aa_mbvd.npc_editor.button.save"), button -> {
+            if (this.minecraft == null || this.minecraft.world == null) return;
+
+            Entity npc = this.minecraft.world.getEntityByID(entityId);
+            if (npc instanceof MobEntity) {
+                MobEntity mobEntity = (MobEntity) npc;
+                mobEntity.getCapability(Capabilities.AA_MBVD_NPC_CAPABILITY).ifPresent(cap -> {
+                    AbstractDialogNode nodeToSave = cap.getDialogNodeByID(currentNodeId);
+                    if (nodeToSave != null) {
+                        nodeToSave.setContent(ITextComponent.getTextComponentOrEmpty(NPC_content_textField.getText()));
+                        nodeToSave.setRoleName(ITextComponent.getTextComponentOrEmpty(NPC_name_textField.getText()));
+                        nodeToSave.setNextNodeId(NPC_nextNode_textField.getText());
+                        nodeToSave.setID(NPC_thisNode_textField.getText()); // 注意：修改ID可能会有影响
+
+                        // 如果ID改变了，需要更新currentNodeId
+                        if (!currentNodeId.equals(NPC_thisNode_textField.getText())) {
+                            this.currentNodeId = NPC_thisNode_textField.getText();
+                        }
+                    }
+                });
+                // 刷新界面以反映更改
+                reloadDialog();
+                reloadButtons();
+            }
+        }));
+
+
+        if (!dialogNodes.isEmpty()) {
+            this.NPC_name_textField.setText(dialogNodes.get(0).getRoleName().getString());
+            this.NPC_content_textField.setText(dialogNodes.get(0).getContent().getString());
+            this.NPC_nextNode_textField.setText(dialogNodes.get(0).getNextNodeId());
+            this.NPC_thisNode_textField.setText(dialogNodes.get(0).getID());
+        }
+    }
+
+
+
+    /**
+     * 发送更新到服务器
+     */
+    private void sendUpdateToServer(MobEntity mobEntity, AbstractDialogNode node) {
+         Networking.INSTANCE.sendToServer(new UpdateDialogNodePacket(
+             mobEntity.getEntityId(),
+             node.getID(),
+             node.getRoleName().getString(),
+             node.getContent().getString(),
+             node.getNextNodeId()
+         ));
     }
 
     @Override
-    public void render(MatrixStack ms, int mouseX, int mouseY, float partialTicks) {
-        if (this.minecraft == null) return;
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(matrixStack);
+
+        if (this.minecraft == null || this.minecraft.world == null) return;
 
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        this.minecraft.getTextureManager().bindTexture(BACKGROUND_LOCATION);
 
+        // 绘制背景图像
+        int textureWidth = 208; // 根据实际纹理尺寸调整
+        int textureHeight = 156; // 根据实际纹理尺寸调整
+        blit(matrixStack, (this.width - 208) / 2, 0, 0, 0, 208, 156, textureWidth, textureHeight);
 
+        this.minecraft.fontRenderer.drawText(matrixStack, new TranslationTextComponent("screen.aa_mbvd.npc_editor.description.npc_name"), (float) this.width / 2 - 100, 15, 0xFFFFFF);
+        this.minecraft.fontRenderer.drawText(matrixStack, new TranslationTextComponent("screen.aa_mbvd.npc_editor.description.content"), (float) this.width / 2 - 100, 45, 0xFFFFFF);
+        this.minecraft.fontRenderer.drawText(matrixStack, new TranslationTextComponent("screen.aa_mbvd.npc_editor.description.this_node"), (float) this.width / 2 - 100, 75, 0xFFFFFF);
+        this.minecraft.fontRenderer.drawText(matrixStack, new TranslationTextComponent("screen.aa_mbvd.npc_editor.description.next_node"), (float) this.width / 2 - 100, 105, 0xFFFFFF);
 
+        this.NPC_nextNode_textField.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.NPC_content_textField.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.NPC_name_textField.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.NPC_thisNode_textField.render(matrixStack, mouseX, mouseY, partialTicks);
 
-        this.renderBackground(ms);
-        super.render(ms, mouseX, mouseY, partialTicks);
-        this.renderHoveredTooltip(ms, mouseX, mouseY);
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float v, int i1, int i2) {
-        if (this.minecraft == null) return;
+    public void resize(Minecraft p_231152_1_, int p_231152_2_, int p_231152_3_) {
+        super.resize(p_231152_1_, p_231152_2_, p_231152_3_);
+        if (this.minecraft == null || this.minecraft.world == null) return;
+        if (this.entityId == 0) return;
 
-        // 绘制标签
-        drawString(matrixStack, this.minecraft.fontRenderer, new TranslationTextComponent("screen.aa_mbvd.npc_editor.title"), this.guiLeft, this.guiTop - 15, 0x404040);
-        drawString(matrixStack, this.minecraft.fontRenderer, new TranslationTextComponent("screen.aa_mbvd.npc_editor.description.npc_name"), this.guiLeft, this.guiTop + 15, 0x404040);
-        drawString(matrixStack, this.minecraft.fontRenderer, new TranslationTextComponent("screen.aa_mbvd.npc_editor.description.role_name"), this.guiLeft, this.guiTop + 40, 0x404040);
-        drawString(matrixStack, this.minecraft.fontRenderer, new TranslationTextComponent("screen.aa_mbvd.npc_editor.description.content"), this.guiLeft, this.guiTop + 65, 0x404040);
-        drawString(matrixStack, this.minecraft.fontRenderer, new TranslationTextComponent("screen.aa_mbvd.npc_editor.description.reply"), this.guiLeft, this.guiTop + 90, 0x404040);
-        drawString(matrixStack, this.minecraft.fontRenderer, new TranslationTextComponent("screen.aa_mbvd.npc_editor.description.next_node"), this.guiLeft, this.guiTop + 115, 0x404040);
+        // 重新初始化文本框位置
+        if (NPC_name_textField != null) NPC_name_textField.x = this.width / 2;
+        if (NPC_name_textField != null) NPC_name_textField.y = 20;
+        if (NPC_content_textField != null) NPC_content_textField.x = this.width / 2;
+        if (NPC_content_textField != null) NPC_content_textField.y = 50;
+        if (NPC_thisNode_textField != null) NPC_thisNode_textField.x = this.width / 2;
+        if (NPC_thisNode_textField != null) NPC_thisNode_textField.y = 80;
+        if (NPC_nextNode_textField != null) NPC_nextNode_textField.x = this.width / 2;
+        if (NPC_nextNode_textField != null) NPC_nextNode_textField.y = 110;
 
-        this.minecraft.getTextureManager().bindTexture(Res.BACKGROUND_TEXTURE);
-        int guiStartX = (this.width - this.imageWidth) / 2;
-        int guiStartY = (this.height - this.imageHeight) / 2;
-        this.blit(matrixStack, guiStartX, guiStartY, 0, 0, this.imageWidth, this.imageHeight);
 
-        this.minecraft.getTextureManager().bindTexture(SLOT_TEXTURE);
+        reloadDialog();
+        reloadButtons();
+        updateButtonPositions();
+    }
 
-//        // 绘制玩家物品栏槽位背景 (位置固定)
-//        for (int i = 0; i < 3; ++i) {
-//            for (int j = 0; j < 9; ++j) {
-//                this.blit(matrixStack, startX + 231 + j * 18, startY + i * 18 + 81, 0, 0, 18, 18);
-//            }
-//        }
-//
-//        // 绘制快捷栏槽位背景 (位置固定)
-//        for (int i = 0; i < 9; ++i) {
-//            this.blit(matrixStack, startX + 231 + i * 18, startY + 3 * 18 + 89, 0, 0, 18, 18);
-//        }
 
-        // 使用容器中定义的起始位置来绘制槽位，添加安全检查
-        if (this.container != null) {
-            int containerStartX = this.container.getStartX() - 1;
-            int containerStartY = this.container.getStartY() - 1;
-            
-            // 绘制玩家物品栏槽位背景
-            for (int i = 0; i < 3; ++i) {
-                for (int j = 0; j < 9; ++j) {
-                    int drawX = guiStartX + containerStartX + (j + 2) * 18;
-                    int drawY = guiStartY + containerStartY + i * 18;
-                    this.blit(matrixStack, drawX, drawY + offset_y, 0, 0, 18, 18);
+    private void updateButtonPositions() {
+        if (this.minecraft == null || this.minecraft.world == null) return;
+
+        // 获取当前屏幕上的按钮列表并更新它们的位置
+        for (Widget widget : this.buttons) {
+            Button button = (Button) widget;
+
+            // 检查是否是对话节点按钮（通过按钮数量和位置来判断）
+            if (isDialogNodeButton(button)) {
+                // 找到该按钮对应的数据索引
+                int nodeIndex = findDialogNodeIndex(button.getMessage().getString());
+                if (nodeIndex != -1) {
+                    button.x = this.width / 2 - 250;
+                    button.y = nodeIndex * 35 + 20;
                 }
             }
-
-            // 绘制快捷栏槽位背景
-            for (int i = 0; i < 9; ++i) {
-                int drawX = guiStartX + containerStartX + (i + 2) * 18;
-                int drawY = guiStartY + containerStartY + 58;
-                this.blit(matrixStack, drawX, drawY + offset_y, 0, 0, 18, 18);
+            // 特殊处理"Add"、"Delete"和"Save"按钮
+            else if (button.getMessage() instanceof TranslationTextComponent &&
+                    ((TranslationTextComponent) button.getMessage()).getKey().equals("screen.aa_mbvd.npc_editor.button.add")) {
+                button.x = this.width / 2 - 100;
+                button.y = dialogNodes.size() * 35 + 120;
+            } else if (button.getMessage() instanceof TranslationTextComponent &&
+                    ((TranslationTextComponent) button.getMessage()).getKey().equals("screen.aa_mbvd.npc_editor.button.delete")) {
+                button.x = this.width / 2;
+                button.y = dialogNodes.size() * 35 + 120;
+            } else if (button.getMessage() instanceof TranslationTextComponent &&
+                    ((TranslationTextComponent) button.getMessage()).getKey().equals("screen.aa_mbvd.npc_editor.button.save")) {
+                button.x = this.width / 2 - 100;
+                button.y = dialogNodes.size() * 35 + 145;
             }
         }
     }
 
-    @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack p_230451_1_, int p_230451_2_, int p_230451_3_) {
-
+    /**
+     * 判断按钮是否为对话节点按钮
+     */
+    private boolean isDialogNodeButton(Button button) {
+        // 检查按钮文本是否在对话节点列表中
+        String buttonText = button.getMessage().getString();
+        for (AbstractDialogNode node : dialogNodes) {
+            if (node.getID().equals(buttonText)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private void saveData() {
-        // 保存所有输入框的值到能力系统
-        if (container != null && container.cap != null) {
-            AbstractDialogNode node = container.cap.getCurrentNode();
-
-            // 保存NPC名称
-            if (npcNameField != null) {
-                String npcNameText = npcNameField.getText();
-                container.cap.setNpcName(new StringTextComponent(npcNameText));
+    /**
+     * 查找对话节点在列表中的索引
+     */
+    private int findDialogNodeIndex(String id) {
+        for (int i = 0; i < dialogNodes.size(); i++) {
+            if (dialogNodes.get(i).getID().equals(id)) {
+                return i;
             }
+        }
+        return -1;
+    }
 
-            // 保存节点属性（如果节点存在）
-            if (node != null) {
-                if (roleNameField != null) {
-                    String roleNameText = roleNameField.getText();
-                    node.setRoleName(new StringTextComponent(roleNameText));
+    /**
+     * 刷新UI界面
+     */
+    private void refreshUI() {
+        if (this.minecraft == null || this.minecraft.world == null) return;
+
+        Entity npc = this.minecraft.world.getEntityByID(entityId);
+        if (npc instanceof MobEntity) {
+            MobEntity mobEntity = (MobEntity) npc;
+            mobEntity.getCapability(Capabilities.AA_MBVD_NPC_CAPABILITY).ifPresent(cap -> {
+                AbstractDialogNode currentNode = cap.getDialogNodeByID(this.currentNodeId);
+                if (currentNode != null) {
+                    this.NPC_name_textField.setText(currentNode.getRoleName().getString());
+                    this.NPC_content_textField.setText(currentNode.getContent().getString());
+                    this.NPC_thisNode_textField.setText(currentNode.getID());
+                    this.NPC_nextNode_textField.setText(currentNode.getNextNodeId());
                 }
-                if (contentField != null) {
-                    String contentText = contentField.getText();
-                    node.setContent(new StringTextComponent(contentText));
-                }
-                if (replyField != null) {
-                    String replyText = replyField.getText();
-                    node.setReply(new StringTextComponent(replyText));
-                }
-                if (nextNodeField != null) {
-                    String text = nextNodeField.getText();
-                    if (!text.isEmpty()) {
-                        try {
-                            node.setNextNodeId(UUID.fromString(text));
-                        } catch (IllegalArgumentException e) {
-                            // 如果UUID格式不正确，设置为null
-                            node.setNextNodeId(null);
-                        }
-                    } else {
-                        node.setNextNodeId(null);
-                    }
-                }
-            }
+            });
         }
     }
 
+
     @Override
-    public void onClose() {
-        saveData();
-        super.onClose();
+    public void tick() {
+        super.tick();
+        this.NPC_nextNode_textField.tick();
+        this.NPC_name_textField.tick();
+        this.NPC_content_textField.tick();
+        this.NPC_thisNode_textField.tick();
+
+
     }
+
 }

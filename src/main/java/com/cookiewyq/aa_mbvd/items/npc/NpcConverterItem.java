@@ -4,6 +4,8 @@ import com.cookiewyq.aa_mbvd.capability.Capabilities;
 import com.cookiewyq.aa_mbvd.items.ModItemGroup;
 import com.cookiewyq.aa_mbvd.network.Networking;
 import com.cookiewyq.aa_mbvd.network.sendPacks.OpenNpcEditorPacket;
+import com.cookiewyq.aa_mbvd.screen.NPC_DialogScreen;
+import com.cookiewyq.aa_mbvd.screen.NpcEditorScreen;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
@@ -49,12 +51,16 @@ public class NpcConverterItem extends Item {
 
         target.getCapability(Capabilities.AA_MBVD_NPC_CAPABILITY).ifPresent(cap -> {
             if (cap.isNpc()) {
-                Networking.INSTANCE.sendToServer(new OpenNpcEditorPacket(target.getEntityId()));
+//                Networking.INSTANCE.sendToServer(new OpenNpcEditorPacket(target.getEntityId()));
+                Minecraft.getInstance().displayGuiScreen(NpcEditorScreen.INSTANCE);
+                NpcEditorScreen.INSTANCE.setEntityId(target.getEntityId());
             } else {
                 BooleanConsumer confirm = (result) -> {
                     if (result) {
                         cap.setNpc(true);
-                        Networking.INSTANCE.sendToServer(new OpenNpcEditorPacket(target.getEntityId()));
+//                        Networking.INSTANCE.sendToServer(new OpenNpcEditorPacket(target.getEntityId()));
+                        Minecraft.getInstance().displayGuiScreen(NpcEditorScreen.INSTANCE);
+                        NpcEditorScreen.INSTANCE.setEntityId(target.getEntityId());
                     }
                     if (Minecraft.getInstance().currentScreen != null) {
                         Minecraft.getInstance().currentScreen.closeScreen();

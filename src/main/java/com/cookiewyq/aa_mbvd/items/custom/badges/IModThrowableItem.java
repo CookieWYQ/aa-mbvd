@@ -7,7 +7,7 @@ import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-public interface IModThrowableItem extends IBadge{
+public interface IModThrowableItem{
 
     boolean isRemoveOnImpact(ItemStack itemStack, ModThrowableEntity modThrowableEntity);
 

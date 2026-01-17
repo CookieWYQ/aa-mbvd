@@ -12,6 +12,7 @@
   "item.aa_mbvd.photo_annihilator_killer": "Annihilator Killer",
   "item.aa_mbvd.photo_king_neil": "King Neil",
   "item.aa_mbvd.npc_converter": "NPC Converter",
+  "item.aa_mbvd.godot_coffee_cup": "Godot's Coffee Cup",
 
   "block.aa_mbvd.silver_block": "Silver Block",
   "block.aa_mbvd.silver_ore": "Silver Ore",
@@ -55,12 +56,14 @@
   "gui.confirm.convert_entity_to_npc_2": "This can make you deal with it as a NPC.",
   "npc.aa_mbvd.default.role_name": "NPC Name",
   "npc.aa_mbvd.default.content": "Hello world!",
-  "npc.aa_mbvd.default.reply": "Hi.",
   "screen.aa_mbvd.npc_editor.title": "NPC对话编辑器",
   "screen.aa_mbvd.npc_editor.description.npc_name": "NPC名称:",
-  "screen.aa_mbvd.npc_editor.description.role_name": "角色名称:",
   "screen.aa_mbvd.npc_editor.description.content": "对话内容:",
-  "screen.aa_mbvd.npc_editor.description.reply": "回复内容:",
-  "screen.aa_mbvd.npc_editor.description.next_node": "下一节点:",
-  "screen.aa_mbvd.npc_editor.save": "Save"
+  "screen.aa_mbvd.npc_editor.description.next_node": "下一节点ID:",
+  "screen.aa_mbvd.npc_editor.button.save": "Save",
+  "message.godot_coffee_cup": "%s，尝尝吧，尝尝这杯咖啡的意义何在",
+  "screen.aa_mbvd.npc_editor.description.this_node": "此节点ID:",
+  "screen.aa_mbvd.npc_screen.button.next_node": "Next",
+  "screen.aa_mbvd.npc_editor.button.delete": "Delete",
+  "screen.aa_mbvd.npc_editor.button.add": "Add"
 }

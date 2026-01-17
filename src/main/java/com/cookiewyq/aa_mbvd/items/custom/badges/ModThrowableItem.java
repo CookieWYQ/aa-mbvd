@@ -15,7 +15,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -38,7 +37,7 @@ public abstract class ModThrowableItem extends Item implements IModThrowableItem
 
         playSound(world, player);
         if (!world.isRemote) {
-            ModThrowableEntity modThrowableEntity = getBadgeEntity(world, player, itemStack);
+            ModThrowableEntity modThrowableEntity = getEntity(world, player, itemStack);
             modThrowableEntity.setDirectionAndMovement(player, player.rotationPitch, player.rotationYaw, 0.0F, 1.5F, 1.0F);
             world.addEntity(modThrowableEntity);
         }
@@ -66,7 +65,7 @@ public abstract class ModThrowableItem extends Item implements IModThrowableItem
         super.addInformation(itemStack, world, components, iTooltipFlag);
     }
 
-    private ModThrowableEntity getBadgeEntity(World world, PlayerEntity player, ItemStack itemStack) {
+    private ModThrowableEntity getEntity(World world, PlayerEntity player, ItemStack itemStack) {
         ModThrowableEntity modThrowableEntity = new ModThrowableEntity(world, player) {
             @Override
             protected void onEntityHit(EntityRayTraceResult rayTraceResult) {

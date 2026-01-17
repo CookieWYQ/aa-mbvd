@@ -24,10 +24,10 @@ public class ModContainerTypes {
                         }));
                     });
 
-    public static final RegistryObject<ContainerType<NpcEditorContainer>>
-            NPC_EDITOR_CONTAINER =
-            CONTAINERS.register("aa_mbvd_container",
-                    () -> IForgeContainerType.create(((windowId, inv, data) -> new NpcEditorContainer(windowId, inv))));
+//    public static final RegistryObject<ContainerType<NpcEditorContainer_DIED>>
+//            NPC_EDITOR_CONTAINER =
+//            CONTAINERS.register("aa_mbvd_container",
+//                    () -> IForgeContainerType.create(((windowId, inv, data) -> new NpcEditorContainer_DIED(windowId, inv))));
 
     public static void register(IEventBus eventBus) {
         AA_MbvdMod.PLOGGER.info("Registering container types");

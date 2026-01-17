@@ -1,6 +1,7 @@
 package com.cookiewyq.aa_mbvd.network.sendPacks;
 
-import com.cookiewyq.aa_mbvd.container.NpcEditorContainer;
+import com.cookiewyq.aa_mbvd.capability.npc.IAA_MBVD_NpcCapability;
+import com.cookiewyq.aa_mbvd.network.Networking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,13 +14,15 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class OpenNpcEditorPacket {
 
-//    private final UUID npcUUID;
+    //    private final UUID npcUUID;
     private final int npcID;
 
     public OpenNpcEditorPacket(int npcID) {
@@ -40,27 +43,33 @@ public class OpenNpcEditorPacket {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity p = ctx.get().getSender();
-            if (p != null) {
-                Entity npcEntity = p.getEntityWorld().getEntityByID(npcID);
-                if (npcEntity instanceof MobEntity) {
-                    NetworkHooks.openGui(p, new INamedContainerProvider() {
-                        @Nonnull
-                        @Override
-                        public ITextComponent getDisplayName() {
-                            return new TranslationTextComponent("container.aa_mbvd.npc_editor");
-                        }
+                    ServerPlayerEntity p = ctx.get().getSender();
+                    if (p != null) {
+                        Entity npcEntity = p.getEntityWorld().getEntityByID(npcID);
+                        if (npcEntity instanceof MobEntity) {
+                            MobEntity mobEntity = (MobEntity) npcEntity;
 
-                        @Nonnull
-                        @Override
-                        public Container createMenu(int i, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity playerEntity) {
-                            return new NpcEditorContainer(i, playerInventory, (MobEntity) npcEntity);
+//                            NetworkHooks.openGui(p, new INamedContainerProvider() {
+//                                @Nonnull
+//                                @Override
+//                                public ITextComponent getDisplayName() {
+//                                    return new TranslationTextComponent("container.aa_mbvd.npc_editor");
+//                                }
+//
+//                                @Nonnull
+//                                @Override
+//                                public Container createMenu(int i, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity playerEntity) {
+//                                    return new NpcEditorContainer_DIED(i, playerInventory, mobEntity);
+//                                }
+//                            });
+
+
+
                         }
-                    });
+                    }
                 }
-            }
-        });
+        );
         ctx.get().setPacketHandled(true);
     }
-
 }
+
