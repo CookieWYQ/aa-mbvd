@@ -55,20 +55,20 @@ public class CommonDialogNode extends AbstractDialogNode{
 
     @Override
     public INBT serializeNBT() {
-        CompoundNBT nbt_info = new CompoundNBT();
-        nbt_info.putString("roleName", ITextComponent.Serializer.toJson(roleName));
-        nbt_info.putString("content", ITextComponent.Serializer.toJson(content));
-        CompoundNBT nbt_f = new CompoundNBT();
-        nbt_f.put(nodeID, nbt_info);
-        return nbt_f;
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putString("nodeID", nodeID);
+        nbt.putString("nextNodeId", nextNodeId);
+        nbt.putString("roleName", ITextComponent.Serializer.toJson(roleName));
+        nbt.putString("content", ITextComponent.Serializer.toJson(content));
+        return nbt;
     }
 
     @Override
     public void deserializeNBT(INBT inbt) {
         CompoundNBT nbt = (CompoundNBT) inbt;
-        CompoundNBT nbt_info = nbt.getCompound(nodeID);
-
-        roleName = ITextComponent.Serializer.getComponentFromJson(nbt_info.getString("roleName"));
-        content = ITextComponent.Serializer.getComponentFromJson(nbt_info.getString("content"));
+        nodeID = nbt.getString("nodeID");
+        nextNodeId = nbt.getString("nextNodeId");
+        roleName = ITextComponent.Serializer.getComponentFromJson(nbt.getString("roleName"));
+        content = ITextComponent.Serializer.getComponentFromJson(nbt.getString("content"));
     }
 }

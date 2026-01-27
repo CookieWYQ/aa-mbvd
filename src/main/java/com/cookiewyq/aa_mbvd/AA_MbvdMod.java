@@ -15,9 +15,9 @@ import com.cookiewyq.aa_mbvd.items.MinecraftEvidences;
 import com.cookiewyq.aa_mbvd.items.ModItems;
 import com.cookiewyq.aa_mbvd.keyBinding.ModKeyBindings;
 import com.cookiewyq.aa_mbvd.network.Networking;
+import com.cookiewyq.aa_mbvd.particles.ModParticles;
 import com.cookiewyq.aa_mbvd.renderers.PhoenixWrightRenderer;
 import com.cookiewyq.aa_mbvd.screen.CourtRecordScreen;
-import com.cookiewyq.aa_mbvd.screen.NpcEditorScreen;
 import com.cookiewyq.aa_mbvd.sound.ModSounds;
 import com.cookiewyq.aa_mbvd.tileentity.ModTileEntities;
 import com.cookiewyq.aa_mbvd.villagers.ModPOIs;
@@ -62,6 +62,7 @@ public class AA_MbvdMod {
     public static final Logger PLOGGER = LogManager.getLogger();
 
     public AA_MbvdMod() {
+        System.out.println("AA_MbvdMod constructor called!");
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ModSounds.registerLittleMatterSounds();
@@ -77,6 +78,7 @@ public class AA_MbvdMod {
         ModTileEntities.register(eventBus);
         ModEnchantments.register(eventBus);
         ModPOIs.register(eventBus);
+        ModParticles.registerParticleFactories(eventBus);
         ModVillagerProfessions.register(eventBus);
 
         // Register the setup method for modloading
@@ -86,7 +88,9 @@ public class AA_MbvdMod {
         // Register the processIMC method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
         // Register the doClientStuff method for modloading
+        System.out.println("About to register doClientStuff listener");
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        System.out.println("doClientStuff listener registered");
 
         eventBus.addListener(Capabilities::registerCapabilities);
 
@@ -157,6 +161,7 @@ public class AA_MbvdMod {
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
+        System.out.println("In doClientStuff method - START");
         ModKeyBindings.register(event);
 
         // 添加这一行来注册容器屏幕
@@ -172,11 +177,23 @@ public class AA_MbvdMod {
 //            );
         });
 
+        // 在这里直接注册粒子工厂
+        System.out.println("In doClientStuff method - registering particle factory");
+        event.enqueueWork(() -> {
+            System.out.println("Registering objection particle factory in doClientStuff");
+            Minecraft.getInstance().particles.registerFactory(
+                ModParticles.objectionParticle.get(),
+                com.cookiewyq.aa_mbvd.particles.ObjectionParticleFactory::new
+            );
+            System.out.println("Objection particle factory registered successfully in doClientStuff");
+        });
+
         RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.BADGE.get(),
                 manager -> new SpriteRenderer<>(manager, Minecraft.getInstance().getItemRenderer()));
 
         RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.PhoenixWright.get(),
                 PhoenixWrightRenderer::new);
+        System.out.println("In doClientStuff method - END");
     }
 
 
@@ -196,6 +213,7 @@ public class AA_MbvdMod {
 
     @SubscribeEvent
     public void onServerStarting(FMLServerStartingEvent event) {
+        System.out.println("FMLServerStartingEvent triggered");
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)

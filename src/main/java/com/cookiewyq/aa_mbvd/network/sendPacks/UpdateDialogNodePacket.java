@@ -3,6 +3,7 @@ package com.cookiewyq.aa_mbvd.network.sendPacks;
 
 import com.cookiewyq.aa_mbvd.capability.Capabilities;
 import com.cookiewyq.aa_mbvd.capability.npc.nodes.AbstractDialogNode;
+import com.cookiewyq.aa_mbvd.capability.npc.nodes.CommonDialogNode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -10,6 +11,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class UpdateDialogNodePacket {
@@ -70,31 +72,35 @@ public class UpdateDialogNodePacket {
         context.enqueueWork(() -> {
             ServerPlayerEntity sender = context.getSender();
             if (sender != null && !sender.world.isRemote) {
-                // 在服务端处理数据更新
                 Entity targetEntity = sender.world.getEntityByID(this.entityId);
                 if (targetEntity instanceof MobEntity) {
                     MobEntity mobEntity = (MobEntity) targetEntity;
 
-                    // 获取并更新NPC能力
                     mobEntity.getCapability(Capabilities.AA_MBVD_NPC_CAPABILITY).ifPresent(cap -> {
-                        // 更新指定的对话节点
                         AbstractDialogNode node = cap.getDialogNodeByID(this.nodeId);
                         if (node != null) {
-                            // 更新节点信息
-                            node.setID(this.nodeId);
+                            // 更新现有节点信息（注意不要更新ID）
                             node.setRoleName(new StringTextComponent(this.roleName));
                             node.setContent(new StringTextComponent(this.content));
                             node.setNextNodeId(this.nextNodeId);
-
-                            // 同步更新到所有客户端
-                            // NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> mobEntity),
-                            //     new SyncDialogNodePacket(mobEntity.getEntityId(), node));
+                        } else {
+                            // 创建新节点
+                            AbstractDialogNode newNode = new CommonDialogNode();
+                            newNode.setID(this.nodeId);
+                            newNode.setRoleName(new StringTextComponent(this.roleName));
+                            newNode.setContent(new StringTextComponent(this.content));
+                            newNode.setNextNodeId(this.nextNodeId);
+                            cap.addDialogNode(newNode);
                         }
+
+                        // 确保实体需要持久化
+                        mobEntity.enablePersistence();
                     });
                 }
             }
         });
         context.setPacketHandled(true);
     }
+
 
 }

@@ -17,10 +17,7 @@ public class AA_MBVD_NpcCapability implements IAA_MBVD_NpcCapability {
     /** 是否为 NPC */
     private boolean isNpc = false;
 
-    private final ArrayList<AbstractDialogNode> dialogNodes = new ArrayList<AbstractDialogNode>() {{
-        add(defaultDialogNode);
-    }};
-
+    private final ArrayList<AbstractDialogNode> dialogNodes = new ArrayList<>();
 
     private String currentNodeID;
 
@@ -35,6 +32,16 @@ public class AA_MBVD_NpcCapability implements IAA_MBVD_NpcCapability {
     }
 
     @Override
+    public boolean isDialogNodeExists(String nodeId) {
+        for (AbstractDialogNode node : dialogNodes) {
+            if (node.getID().equals(nodeId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public ArrayList<AbstractDialogNode> getDialogNodes() {
         return this.dialogNodes;
     }
@@ -45,9 +52,24 @@ public class AA_MBVD_NpcCapability implements IAA_MBVD_NpcCapability {
     }
 
     @Override
-    public void addDialogNode(AbstractDialogNode node) {
+    public boolean addDialogNode(AbstractDialogNode node) {
+        if (node == null) {
+            return false;
+        }
+        // 检查ID是否为空
+        if (node.getID() == null || node.getID().isEmpty()) {
+            System.out.println("Warning: Attempted to add dialog node with null or empty ID");
+            return false;
+        }
+        // 检查ID是否已存在
+        if (isDialogNodeExists(node.getID())) {
+            System.out.println("Warning: Dialog node with ID already exists: " + node.getID());
+            return false;
+        }
         this.dialogNodes.add(node);
+        return true;
     }
+
 
     @Override
     public void removeDialogNode(AbstractDialogNode node) {
@@ -96,12 +118,17 @@ public class AA_MBVD_NpcCapability implements IAA_MBVD_NpcCapability {
         }
     }
 
-
-
+    // 如果没有对话节点，添加默认节点
+    public void ensureHasDialogNodes() {
+        if (dialogNodes.isEmpty()) {
+            dialogNodes.add(defaultDialogNode);
+        }
+    }
 
 
     /* ================= 存档 ================= */
 
+    // 在 AA_MBVD_NpcCapability 的 serializeNBT 方法中
     public CompoundNBT serializeNBT() {
         CompoundNBT tag = new CompoundNBT();
         tag.putBoolean("IsNpc", isNpc);
@@ -110,13 +137,19 @@ public class AA_MBVD_NpcCapability implements IAA_MBVD_NpcCapability {
         for (AbstractDialogNode node : dialogNodes) {
             dialogs.put(node.getID(), node.serializeNBT());
         }
-
         tag.put("Dialogs", dialogs);
 
+        // 添加当前节点ID的持久化
+        if (currentNodeID != null) {
+            tag.putString("CurrentNodeID", currentNodeID);
+        } else {
+            tag.putString("CurrentNodeID", ""); // 确保即使为null也能保存
+        }
 
         return tag;
     }
 
+    // 在 AA_MBVD_NpcCapability 的 deserializeNBT 方法中
     @Override
     public void deserializeNBT(INBT inbt) {
         CompoundNBT tag = (CompoundNBT) inbt;
@@ -130,6 +163,24 @@ public class AA_MBVD_NpcCapability implements IAA_MBVD_NpcCapability {
             this.addDialogNode(node);
         }
 
+        // 读取当前节点ID
+        if (tag.contains("CurrentNodeID")) {
+            this.currentNodeID = tag.getString("CurrentNodeID");
+            // 验证当前节点是否存在
+            if (getDialogNodeByID(this.currentNodeID) == null && !dialogNodes.isEmpty()) {
+                // 如果当前节点不存在，设置为第一个节点
+                this.currentNodeID = dialogNodes.get(0).getID();
+            }
+        } else {
+            // 如果没有保存的当前节点ID，默认设为第一个节点
+            if (!dialogNodes.isEmpty()) {
+                this.currentNodeID = dialogNodes.get(0).getID();
+            }
+        }
+
+        // 确保至少有一个节点
+        ensureHasDialogNodes();
     }
+
 
 }

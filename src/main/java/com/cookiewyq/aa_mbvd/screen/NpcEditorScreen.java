@@ -80,7 +80,17 @@ public class NpcEditorScreen extends Screen {
             MobEntity mobEntity = (MobEntity) npc;
             mobEntity.getCapability(Capabilities.AA_MBVD_NPC_CAPABILITY).ifPresent(cap -> {
                 this.dialogNodes = (ArrayList<AbstractDialogNode>) cap.getDialogNodes();
-                this.currentNodeId = this.dialogNodes.get(0).getID();
+                if (!this.dialogNodes.isEmpty()) {
+                    this.currentNodeId = this.dialogNodes.get(0).getID();
+                } else {
+                    // 如果没有对话节点，则创建一个默认节点
+                    AbstractDialogNode defaultNode = new CommonDialogNode();
+                    if (!cap.addDialogNode(defaultNode)) {
+                        return;
+                    }
+                    this.currentNodeId = defaultNode.getID();
+                    this.dialogNodes = (ArrayList<AbstractDialogNode>) cap.getDialogNodes();
+                }
             });
         }
     }
@@ -122,12 +132,14 @@ public class NpcEditorScreen extends Screen {
                 MobEntity mobEntity = (MobEntity) npc;
                 mobEntity.getCapability(Capabilities.AA_MBVD_NPC_CAPABILITY).ifPresent(cap -> {
                     AbstractDialogNode node = new CommonDialogNode();
-                    // 修复：使用新的ID而不是getNextNodeId()
-//                    String newId = "node_" + System.currentTimeMillis(); // 生成唯一ID
-                    String newId = cap.getDialogNodeByID(this.currentNodeId).getNextNodeId();
+                    // 生成唯一ID
+                    String newId = "node_" + System.currentTimeMillis(); // 生成唯一ID
                     node.setID(newId);
-                    this.currentNodeId = newId;
                     cap.addDialogNode(node);
+                    this.currentNodeId = newId;
+
+                    // 发送更新包到服务端确保数据持久化
+                    sendUpdateToServer(mobEntity, node);
                 });
                 // 刷新整个界面
                 reloadDialog();
@@ -164,6 +176,8 @@ public class NpcEditorScreen extends Screen {
                             this.NPC_thisNode_textField.setText(firstNode.getID());
                             this.NPC_nextNode_textField.setText(firstNode.getNextNodeId());
                         }
+
+
                     }
                 });
                 // 刷新整个界面
@@ -185,20 +199,34 @@ public class NpcEditorScreen extends Screen {
                 mobEntity.getCapability(Capabilities.AA_MBVD_NPC_CAPABILITY).ifPresent(cap -> {
                     AbstractDialogNode nodeToSave = cap.getDialogNodeByID(currentNodeId);
                     if (nodeToSave != null) {
+                        // 保存修改前的ID用于比较
+                        String oldId = nodeToSave.getID();
+
+                        // 更新节点内容
                         nodeToSave.setContent(ITextComponent.getTextComponentOrEmpty(NPC_content_textField.getText()));
                         nodeToSave.setRoleName(ITextComponent.getTextComponentOrEmpty(NPC_name_textField.getText()));
                         nodeToSave.setNextNodeId(NPC_nextNode_textField.getText());
-                        nodeToSave.setID(NPC_thisNode_textField.getText()); // 注意：修改ID可能会有影响
 
-                        // 如果ID改变了，需要更新currentNodeId
-                        if (!currentNodeId.equals(NPC_thisNode_textField.getText())) {
-                            this.currentNodeId = NPC_thisNode_textField.getText();
+                        // 检查是否修改了ID
+                        String newId = NPC_thisNode_textField.getText();
+                        if (!oldId.equals(newId) || !cap.isDialogNodeExists(newId)) {
+                            // 如果ID改变，需要从能力系统中移除旧节点并添加新节点
+                            cap.removeDialogNode(nodeToSave);
+                            nodeToSave.setID(newId);
+                            cap.addDialogNode(nodeToSave);
+
+                            // 更新当前节点ID
+                            this.currentNodeId = newId;
                         }
+
+                        // 发送更新包到服务端确保数据持久化
+                        sendUpdateToServer(mobEntity, nodeToSave);
                     }
                 });
-                // 刷新界面以反映更改
-                reloadDialog();
+                // 只刷新按钮而不重置当前节点
                 reloadButtons();
+                // 保持当前节点状态
+                refreshUI();
             }
         }));
 
@@ -212,18 +240,17 @@ public class NpcEditorScreen extends Screen {
     }
 
 
-
     /**
      * 发送更新到服务器
      */
     private void sendUpdateToServer(MobEntity mobEntity, AbstractDialogNode node) {
-         Networking.INSTANCE.sendToServer(new UpdateDialogNodePacket(
-             mobEntity.getEntityId(),
-             node.getID(),
-             node.getRoleName().getString(),
-             node.getContent().getString(),
-             node.getNextNodeId()
-         ));
+        Networking.INSTANCE.sendToServer(new UpdateDialogNodePacket(
+                mobEntity.getEntityId(),
+                node.getID(),
+                node.getRoleName().getString(),
+                node.getContent().getString(),
+                node.getNextNodeId()
+        ));
     }
 
     @Override

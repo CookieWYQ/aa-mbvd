@@ -34,8 +34,10 @@ public class SilverIngot extends Item {
 
         if (target.getCapability(Capabilities.AA_MBVD_NPC_CAPABILITY).isPresent()) {
             target.getCapability(Capabilities.AA_MBVD_NPC_CAPABILITY).ifPresent(cap -> {
-                Minecraft.getInstance().displayGuiScreen(NPC_DialogScreen.INSTANCE);
-                NPC_DialogScreen.INSTANCE.setEntityId(target.getEntityId());
+                if (cap.isNpc()){
+                    Minecraft.getInstance().displayGuiScreen(NPC_DialogScreen.INSTANCE);
+                    NPC_DialogScreen.INSTANCE.setEntityId(target.getEntityId());
+                }
             });
         }
 

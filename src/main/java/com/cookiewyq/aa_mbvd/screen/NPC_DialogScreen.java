@@ -65,8 +65,11 @@ public class NPC_DialogScreen extends Screen {
                         cap.setCurrentNode(this.currentNode);
                     } else {
                         this.currentNode = AA_MBVD_NpcCapability.defaultDialogNode;
-                        cap.addDialogNode(this.currentNode);
-                        cap.setCurrentNode(this.currentNode);
+                        if (!cap.addDialogNode(this.currentNode)) {
+                            System.out.println("Error: Failed to add default dialog node");
+                        } else {
+                            cap.setCurrentNode(this.currentNode);
+                        }
                     }
                 }
             });

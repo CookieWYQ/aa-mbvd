@@ -2,6 +2,7 @@ package com.cookiewyq.aa_mbvd.items.custom.other;
 
 import com.cookiewyq.aa_mbvd.entities.custom.ModThrowableEntity;
 import com.cookiewyq.aa_mbvd.items.ModItemGroup;
+import com.cookiewyq.aa_mbvd.items.ModItems;
 import com.cookiewyq.aa_mbvd.items.custom.badges.ModThrowableItem;
 import com.cookiewyq.aa_mbvd.sound.ModSounds;
 import com.cookiewyq.aa_mbvd.util.tools;
@@ -9,6 +10,7 @@ import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Rarity;
@@ -56,6 +58,14 @@ public class GodotCoffeeCup extends ModThrowableItem {
             LivingEntity target = (LivingEntity) rayTraceResult.getEntity();
             target.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 250, 2));
             player.sendMessage(new TranslationTextComponent("message.godot_coffee_cup", tools.getTranslatedEntityName(target)), player.getUniqueID());
+            if (!player.isCreative()) {
+                if (player.getHeldItemMainhand().getItem() instanceof GodotCoffeeCup) {
+                    player.getHeldItemMainhand().shrink(1);
+                } else if (player.getHeldItemOffhand().getItem() instanceof GodotCoffeeCup) {
+                    player.getHeldItemOffhand().shrink(1);
+                }
+            }
+            target.setItemStackToSlot(EquipmentSlotType.HEAD, new ItemStack(ModItems.GodotCoffeeCupItem.get()));
         }
     }
 
