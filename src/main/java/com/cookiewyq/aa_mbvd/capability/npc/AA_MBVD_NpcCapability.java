@@ -3,7 +3,6 @@ package com.cookiewyq.aa_mbvd.capability.npc;
 import com.cookiewyq.aa_mbvd.capability.npc.nodes.AbstractDialogNode;
 import com.cookiewyq.aa_mbvd.capability.npc.nodes.CommonDialogNode;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -92,7 +91,7 @@ public class AA_MBVD_NpcCapability implements IAA_MBVD_NpcCapability {
         if (nodeId == null || nodeId.isEmpty()) {
             System.out.println("Warning: Attempted to get dialog node with null or empty ID");
             // 返回默认节点而不是抛出异常
-            return getDefaultDialogNode();
+            return null;
         }
 
         AbstractDialogNode node = dialogNodes.stream()
@@ -151,12 +150,11 @@ public class AA_MBVD_NpcCapability implements IAA_MBVD_NpcCapability {
 
     // 在 AA_MBVD_NpcCapability 的 deserializeNBT 方法中
     @Override
-    public void deserializeNBT(INBT inbt) {
-        CompoundNBT tag = (CompoundNBT) inbt;
-        isNpc = tag.getBoolean("IsNpc");
+    public void deserializeNBT(CompoundNBT nbt) {
+        isNpc = nbt.getBoolean("IsNpc");
 
         this.clearDialogNodes();
-        CompoundNBT dialogs = tag.getCompound("Dialogs");
+        CompoundNBT dialogs = nbt.getCompound("Dialogs");
         for (String key : dialogs.keySet()) {
             AbstractDialogNode node = new CommonDialogNode(); // TODO Different node types
             node.deserializeNBT(dialogs.get(key));
@@ -164,8 +162,8 @@ public class AA_MBVD_NpcCapability implements IAA_MBVD_NpcCapability {
         }
 
         // 读取当前节点ID
-        if (tag.contains("CurrentNodeID")) {
-            this.currentNodeID = tag.getString("CurrentNodeID");
+        if (nbt.contains("CurrentNodeID")) {
+            this.currentNodeID = nbt.getString("CurrentNodeID");
             // 验证当前节点是否存在
             if (getDialogNodeByID(this.currentNodeID) == null && !dialogNodes.isEmpty()) {
                 // 如果当前节点不存在，设置为第一个节点

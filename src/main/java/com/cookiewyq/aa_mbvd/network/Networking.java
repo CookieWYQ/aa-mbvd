@@ -68,6 +68,12 @@ public class Networking {
                 .consumer(UpdateDialogNodePacket::handle)
                 .add();
 
+        INSTANCE.messageBuilder(UpdateAllDialogNodePacket.class, nextID())
+                .encoder(UpdateAllDialogNodePacket::toBytes)
+                .decoder(UpdateAllDialogNodePacket::new)
+                .consumer(UpdateAllDialogNodePacket::handle)
+                .add();
+
 
         AA_MbvdMod.PLOGGER.info("Network messages registered");
     }

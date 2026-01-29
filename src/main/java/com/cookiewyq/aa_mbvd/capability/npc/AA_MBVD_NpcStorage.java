@@ -9,16 +9,16 @@ public class AA_MBVD_NpcStorage implements Capability.IStorage<IAA_MBVD_NpcCapab
 
     @Override
     public CompoundNBT writeNBT(Capability<IAA_MBVD_NpcCapability> capability, IAA_MBVD_NpcCapability instance, Direction side) {
-        if(instance instanceof AA_MBVD_NpcCapability) {
-            return ((AA_MBVD_NpcCapability)instance).serializeNBT();
+        if (instance instanceof AA_MBVD_NpcCapability) {
+            return instance.serializeNBT();
         }
         return new CompoundNBT();
     }
 
     @Override
     public void readNBT(Capability<IAA_MBVD_NpcCapability> capability, IAA_MBVD_NpcCapability instance, Direction side, INBT nbt) {
-        if(instance instanceof AA_MBVD_NpcCapability) {
-            instance.deserializeNBT(nbt);
+        if (instance instanceof AA_MBVD_NpcCapability) {
+            instance.deserializeNBT((CompoundNBT) nbt);
         }
     }
 }

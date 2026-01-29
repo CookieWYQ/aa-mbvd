@@ -4,6 +4,7 @@ import com.cookiewyq.aa_mbvd.capability.Capabilities;
 import com.cookiewyq.aa_mbvd.capability.npc.nodes.AbstractDialogNode;
 import com.cookiewyq.aa_mbvd.capability.npc.nodes.CommonDialogNode;
 import com.cookiewyq.aa_mbvd.network.Networking;
+import com.cookiewyq.aa_mbvd.network.sendPacks.UpdateAllDialogNodePacket;
 import com.cookiewyq.aa_mbvd.network.sendPacks.UpdateDialogNodePacket;
 import com.cookiewyq.aa_mbvd.util.Res;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -23,6 +24,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+
+import static com.cookiewyq.aa_mbvd.AA_MbvdMod.PLOGGER;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -79,6 +82,7 @@ public class NpcEditorScreen extends Screen {
         if (npc instanceof MobEntity) {
             MobEntity mobEntity = (MobEntity) npc;
             mobEntity.getCapability(Capabilities.AA_MBVD_NPC_CAPABILITY).ifPresent(cap -> {
+                PLOGGER.debug("!!!FUCK RELOAD DIALOG(line85) Data: {}", cap.serializeNBT());
                 this.dialogNodes = (ArrayList<AbstractDialogNode>) cap.getDialogNodes();
                 if (!this.dialogNodes.isEmpty()) {
                     this.currentNodeId = this.dialogNodes.get(0).getID();
@@ -219,6 +223,8 @@ public class NpcEditorScreen extends Screen {
                             this.currentNodeId = newId;
                         }
 
+                        sendAllSave(entityId);
+
                         // 发送更新包到服务端确保数据持久化
                         sendUpdateToServer(mobEntity, nodeToSave);
                     }
@@ -237,6 +243,10 @@ public class NpcEditorScreen extends Screen {
             this.NPC_nextNode_textField.setText(dialogNodes.get(0).getNextNodeId());
             this.NPC_thisNode_textField.setText(dialogNodes.get(0).getID());
         }
+    }
+
+    private void sendAllSave(int entityId) {
+        Networking.INSTANCE.sendToServer(new UpdateAllDialogNodePacket(entityId));
     }
 
 
